@@ -14,6 +14,8 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
+media_player: !include players.yaml
+
 discovery:
 
 sensor: !include_dir_merge_list sensors/
