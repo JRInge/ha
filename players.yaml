@@ -1,5 +1,7 @@
+---
 - platform: frontier_silicon
   host: dining-room-radio.local
   password: !secret radio_pin
 - platform: frontier_silicon
   host: kitchen-radio.local
+...

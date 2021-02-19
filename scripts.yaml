@@ -1,12 +1,14 @@
+---
 ifttt_notification:
   alias: IFTTT Notification
   sequence:
-  - service: ifttt.trigger
-    data:
-      event: ha_alert
-      value1: '{{ title }}'
-      value2: '{{ message }}'
-      value3: '{{ url }}'
+    - service: ifttt.trigger
+      data:
+        event: ha_alert
+        value1: '{{ title }}'
+        value2: '{{ message }}'
+        value3: '{{ url }}'
   mode: parallel
   icon: mdi:cellphone-message
   max: 10
+...
