@@ -1,0 +1,19 @@
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Include customizations automatically
+homeassistant:
+  customize: !include customize.yaml
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+discovery:
+
+sensor: !include_dir_merge_list sensors/
