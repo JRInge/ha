@@ -3,8 +3,8 @@ name: Yaml Lint
 on:
   push:
     paths:
-      - '*.yml'
-      - '*.yaml'
+      - '**.yml'
+      - '**.yaml'
 jobs:
   lintAllTheThings:
     runs-on: ubuntu-latest
