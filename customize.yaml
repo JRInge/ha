@@ -1,0 +1,9 @@
+---
+sensor.hp_envy_photo_7100_series_black_ink:
+  friendly_name: Black ink
+sensor.hp_envy_photo_7100_series_tri_color_ink:
+  friendly_name: Tri-color ink
+sensor.uptime:
+  icon: mdi:clock-outline
+  friendly_name: Last restart
+...
