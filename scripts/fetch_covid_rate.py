@@ -1,6 +1,6 @@
 #!/srv/homeassistant/bin/python3
 #
-# Scrape local case rate from data.gov.uk
+# Scrape local COVID-19 case rate from data.gov.uk
 # Returns a single floating point number in cases/100k.
 #
 
