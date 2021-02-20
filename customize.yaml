@@ -1,4 +1,7 @@
 ---
+sensor.covid_rate:
+  friendly_name: Infection rate
+  icon: mdi:virus-outline
 sensor.hp_envy_photo_7100_series_black_ink:
   friendly_name: Black ink
 sensor.hp_envy_photo_7100_series_tri_color_ink:
