@@ -16,7 +16,9 @@
     - service: script.ifttt_notification
       data:
         title: COVID Alert
-        message: "{{ state_attr('sensor.covid_alert_raw', 'name') }}, {{ states('sensor.covid_rate') }}/100k people."
+        message: >
+          {{ state_attr('sensor.covid_alert_raw', 'name') }},
+          {{ states('sensor.covid_rate') }}/100k people.
         url: !secret local_covid_url
   mode: single
 ...
