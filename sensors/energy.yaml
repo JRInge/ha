@@ -1,0 +1,41 @@
+---
+# Energy sensors
+########
+
+- platform: mqtt
+  state_topic: rtl_433/raspberrypi/events
+  device:
+    identifiers: 34743
+    manufacturer: Efergy
+    model: Efergy-e2CT
+    via_device: RTL-433
+  device_class: Current
+  expire_after: 13
+  name: Current
+  unique_id: 34743
+  unit_of_measurement: A
+  value_template: "{{ value_json.current }}"
+  json_attributes_topic: rtl_433/raspberrypi/events
+  json_attributes_template: >
+    {{ {
+      "battery": value_json.battery_ok,
+      "time": value_json.time,
+      "interval": value_json.interval
+    } | to_json }}
+- platform: template
+  sensors:
+    power:
+      friendly_name: Power
+      device_class: power
+      attribute_templates:
+        time: "{{ state_attr('sensor.current', 'time') }}"
+      availability_template: >
+        {{ not is_state('sensor.current', 'unavailable') }}
+      value_template: >
+        {{ (states('sensor.current')
+          | float * 244)
+          | round / 1000
+        }}
+      unique_id: 34743b
+      unit_of_measurement: kW
+...

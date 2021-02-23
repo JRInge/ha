@@ -1,0 +1,19 @@
+---
+# Automations for energy sensor data
+########
+
+- id: 'energy_auto_01'
+  alias: Efergy Battery Low
+  description: Send IFTTT notification if energy meter battery is low.
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.current
+      attribute: battery_ok
+      below: 1
+  action:
+    - service: script.ifttt_notification
+      data:
+        title: Efergy Low Battery
+        message: Time to change the batteries in the energy meter.
+  mode: single
+...
