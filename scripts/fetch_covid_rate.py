@@ -8,7 +8,7 @@ from argparse import ArgumentParser, Namespace
 from urllib.parse import quote_plus
 from urllib.request import urlopen
 from bs4 import BeautifulSoup      # type: ignore
-from bs4.element import ResultSet  # type: ignore
+from bs4.element import ResultSet, Tag  # type: ignore
 
 url: str = "https://coronavirus.data.gov.uk/search?postcode="
 
@@ -25,4 +25,8 @@ if __name__ == '__main__':
     html = urlopen(url + quote_plus(args.postcode))
     soup: BeautifulSoup = BeautifulSoup(html, 'lxml')
     tags: ResultSet = soup.find_all('strong')
-    print(tags[0].text)
+    x: Tag
+    for x in tags:
+        if "Rate per 100k" in x.parent.text:
+            print(x.text)
+            break
