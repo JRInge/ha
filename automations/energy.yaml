@@ -8,7 +8,7 @@
   trigger:
     - platform: numeric_state
       entity_id: sensor.current
-      attribute: battery_ok
+      attribute: battery
       below: 1
   action:
     - service: script.ifttt_notification
