@@ -6,10 +6,12 @@
   alias: Efergy Battery Low
   description: Send IFTTT notification if energy meter battery is low.
   trigger:
-    - platform: numeric_state
-      entity_id: sensor.current
-      attribute: battery
-      below: 1
+    - platform: template
+      value_template: >
+        {{
+          states('sensor.current') != 'unavailable' and
+          state_attr('sensor.current', 'battery') < 1
+        }}
   action:
     - service: script.ifttt_notification
       data:
