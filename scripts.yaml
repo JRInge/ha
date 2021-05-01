@@ -11,4 +11,47 @@ ifttt_notification:
   mode: parallel
   icon: mdi:cellphone-message
   max: 10
+alexa_notification:
+  alias: Alexa Notification
+  sequence:
+    - service: rest_command.voicemonkey
+      data:
+        monkey: echo-dot-monkey
+        message: '{{ message }}'
+        url: '{{ url }}'
+        image: '{{ image }}'
+        video: '{{ video }}'
+  mode: parallel
+  icon: mdi:amazon-alexa
+doorbell_alert_alexa:
+  alias: Alexa doorbell alerts
+  sequence:
+    - condition: state
+      entity_id: input_boolean.doorbell_alert_alexa
+      state: "on"
+    - service: rest_command.voice_monkey
+      data:
+        monkey: doorbell-monkey-alexa
+        message: "{{ message }}"
+doorbell_alert_helen:
+  alias: Helen's doorbell alerts
+  sequence:
+    - condition: state
+      entity_id: input_boolean.doorbell_alert_helen
+      state: "on"
+doorbell_alert_james:
+  alias: James's doorbell alerts
+  sequence:
+    - condition: state
+      entity_id: input_boolean.doorbell_alert_james
+      state: "on"
+    - service: rest_command.voice_monkey
+      data:
+        monkey: doorbell-monkey-james
+        message: "{{ message }}"
+    - service: script.ifttt_notification
+      data:
+        title: HomeAssistant Alert
+        message: Doorbell pressed
+        url: 'http://raspberrypi:8123/lovelace/doorbell'
 ...

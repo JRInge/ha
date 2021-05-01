@@ -1,0 +1,28 @@
+---
+# Automations for handling smart doorbell presses
+########
+
+# Alerts are called via separate scripts so that they can be controlled by
+# separate conditions. If they were in a single script or automation, the first
+# failed condition would prevent any other alerts running.
+
+- id: '16118283879'
+  alias: Doorbell alerts
+  description: Send configured alerts when the doorbell is pushed.
+  trigger:
+    - platform: mqtt
+      topic: smartbell/ringing
+  variables:
+    message: Someone at the door there is!
+  action:
+    - service: script.doorbell_alert_alexa
+      data:
+        message: "{{ message }}"
+    - service: script.doorbell_alert_helen
+      data:
+        message: "{{ message }}"
+    - service: script.doorbell_alert_james
+      data:
+        message: "{{ message }}"
+  mode: single
+...
