@@ -6,6 +6,7 @@
 #include <WiFiUdp.h>
 
 #include "smartbell_secrets.h"
+
 const char* ssid = SECRET_MAIN_SSID;
 const char* pass = SECRET_MAIN_PASS;
 const char* ssidFallback = SECRET_FALLBACK_SSID;
@@ -27,14 +28,19 @@ const char* passFallback = SECRET_FALLBACK_PASS;
 // try again to connect to your regular network, so it will not stay down too
 // long after a short outage of your infrastructure.
 
-const char* hostname = "smartbell";
-const char* mqttTopicLast = "smartbell/last";
-const char* mqttTopicLastRequest = "smartbell/last/get";
-const char* mqttTopicOTA = "smartbell/ota";
-const char* mqttTopicRinging = "smartbell/ringing";
-const char* mqttTopicStatus = "smartbell/status";
-const char* mqttTopicStatusRequest = "smartbell/status/get";
-const char* mqttTopicTest = "smartbell/test";
+#define HOST "smartbell2"
+
+const char* hostname = HOST;
+const char* mqttTopicAvailability = "smartbell/"HOST"/status";
+const char* mqttTopicConfig1 = "homeassistant/device_automation/"HOST"/config";
+const char* mqttTopicConfig2 = "homeassistant/sensor/"HOST"/config";
+const char* mqttTopicLast = "smartbell/"HOST"/last";
+const char* mqttTopicLastRequest = "smartbell/"HOST"/last/get";
+const char* mqttTopicOTA = "smartbell/"HOST"/ota";
+const char* mqttTopicRinging = "smartbell/"HOST"/ringing";
+const char* mqttTopicStatus = "smartbell/"HOST"/info";
+const char* mqttTopicStatusRequest = "smartbell/"HOST"/info/get";
+const char* mqttTopicTest = "smartbell/"HOST"/test";
 
 const byte    pinRinging = 18;
 IPAddress     myip;
@@ -117,7 +123,8 @@ void loop() {
       Serial.print("Trying MQTT... ");
       timeout = millis();
       while (!mqttClient.connected() && millis()-timeout < 10000) {
-        mqttClient.connect(hostname);
+        // Connect to MQTT broker, using Last Will & testament message to go offline if connection drops.
+        mqttClient.connect(hostname, NULL, NULL, mqttTopicAvailability, 0, true, "offline", false);
         delay(1000);
       }
       if (!mqttClient.connected()) {
@@ -154,14 +161,23 @@ void loop() {
 }
 
 void normalSetup() {
+  char buffer[1024];
+  
   Serial.print("Setup for normal mode... ");
   isRinging = false;
   ringDebounce = millis();
   otaEnabled = false;
-    mqttClient.subscribe(mqttTopicOTA);
+
+  mqttClient.setBufferSize(512);
+  mqttClient.subscribe(mqttTopicOTA);
   mqttClient.subscribe(mqttTopicLastRequest);
   mqttClient.subscribe(mqttTopicStatusRequest);
   mqttClient.subscribe(mqttTopicTest);
+  mqttClient.publish(mqttTopicAvailability, "online", true);
+  sprintf(buffer, "{\"atype\": \"trigger\", \"t\": \"%s\", \"type\": \"button_short_press\", \"stype\": \"button_1\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}}", mqttTopicRinging, WiFi.macAddress().c_str(), HOST);
+  mqttClient.publish(mqttTopicConfig1, buffer, true);
+  sprintf(buffer, "{\"avty_t\": \"%s\", \"stat_t\": \"%s\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}, \"dev_cla\": \"timestamp\", \"name\": \"Last pressed\", \"uniq_id\": \"%s\"}", mqttTopicAvailability, mqttTopicLast, WiFi.macAddress().c_str(), HOST, HOST);
+  mqttClient.publish(mqttTopicConfig2, buffer, true);
   Serial.println("[Done]");
 }
 
@@ -182,6 +198,8 @@ bool checkRinging() {
     ringDebounce = millis();
     lastTime = timeClient.getEpochTime();
     Serial.println("Palim, palim!");
+    sprintf(status, "%d", lastTime);
+    mqttClient.publish(mqttTopicLast, status, true);
     sprintf(status, "{\"time\": %lu, \"type\": \"Doorbell\"}", lastTime);
     mqttClient.publish(mqttTopicRinging, status);
   }
@@ -208,6 +226,8 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
       mqttClient.publish(mqttTopicStatus, status);
     } else if (strcmp(topic, mqttTopicTest) == 0) {
       lastTime = timeClient.getEpochTime();
+      sprintf(status, "%d", lastTime);
+      mqttClient.publish(mqttTopicLast, status);
       sprintf(status, "{\"time\": %lu, \"type\": \"Test\"}", lastTime); 
       mqttClient.publish(mqttTopicRinging, status);
     }
