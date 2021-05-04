@@ -7,11 +7,11 @@
 
 #include "smartbell_secrets.h"
 
+// Wifi details defined in smartbell_secrets.h
 const char* ssid = SECRET_MAIN_SSID;
 const char* pass = SECRET_MAIN_PASS;
 const char* ssidFallback = SECRET_FALLBACK_SSID;
 const char* passFallback = SECRET_FALLBACK_PASS;
-
 
 // Important: Passwords and OTA
 // This code is designed to run on a secure private network. Normally, the
@@ -28,6 +28,7 @@ const char* passFallback = SECRET_FALLBACK_PASS;
 // try again to connect to your regular network, so it will not stay down too
 // long after a short outage of your infrastructure.
 
+#define MAX_MESSAGE_LEN 512
 #define HOST "smartbell2"
 
 const char* hostname = HOST;
@@ -35,7 +36,6 @@ const char* mqttTopicAvailability = "smartbell/"HOST"/status";
 const char* mqttTopicConfig1 = "homeassistant/device_automation/"HOST"/config";
 const char* mqttTopicConfig2 = "homeassistant/sensor/"HOST"/config";
 const char* mqttTopicLast = "smartbell/"HOST"/last";
-const char* mqttTopicLastRequest = "smartbell/"HOST"/last/get";
 const char* mqttTopicOTA = "smartbell/"HOST"/ota";
 const char* mqttTopicRinging = "smartbell/"HOST"/ringing";
 const char* mqttTopicStatus = "smartbell/"HOST"/info";
@@ -161,24 +161,28 @@ void loop() {
 }
 
 void normalSetup() {
-  char buffer[1024];
+  char buffer[MAX_MESSAGE_LEN];
+  bool ok = false;
   
   Serial.print("Setup for normal mode... ");
   isRinging = false;
   ringDebounce = millis();
   otaEnabled = false;
-
-  mqttClient.setBufferSize(512);
-  mqttClient.subscribe(mqttTopicOTA);
-  mqttClient.subscribe(mqttTopicLastRequest);
-  mqttClient.subscribe(mqttTopicStatusRequest);
-  mqttClient.subscribe(mqttTopicTest);
-  mqttClient.publish(mqttTopicAvailability, "online", true);
+  
+  ok = mqttClient.setBufferSize(MAX_MESSAGE_LEN);
+  ok = ok && mqttClient.subscribe(mqttTopicOTA);
+  ok = ok && mqttClient.subscribe(mqttTopicStatusRequest);
+  ok = ok && mqttClient.subscribe(mqttTopicTest);
+  ok = ok && mqttClient.publish(mqttTopicAvailability, "online", true);
   sprintf(buffer, "{\"atype\": \"trigger\", \"t\": \"%s\", \"type\": \"button_short_press\", \"stype\": \"button_1\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}}", mqttTopicRinging, WiFi.macAddress().c_str(), HOST);
-  mqttClient.publish(mqttTopicConfig1, buffer, true);
-  sprintf(buffer, "{\"avty_t\": \"%s\", \"stat_t\": \"%s\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}, \"dev_cla\": \"timestamp\", \"name\": \"Last pressed\", \"uniq_id\": \"%s\"}", mqttTopicAvailability, mqttTopicLast, WiFi.macAddress().c_str(), HOST, HOST);
-  mqttClient.publish(mqttTopicConfig2, buffer, true);
-  Serial.println("[Done]");
+  ok = ok && mqttClient.publish(mqttTopicConfig1, buffer, true);
+  sprintf(buffer, "{\"avty_t\": \"%s\", \"stat_t\": \"%s\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}, \"dev_cla\": \"timestamp\", \"name\": \"Last pressed\", \"uniq_id\": \"%s\", \"val_tpl\": \"{{value|int|timestamp_local}}\"}", mqttTopicAvailability, mqttTopicLast, WiFi.macAddress().c_str(), HOST, HOST);
+  ok = ok && mqttClient.publish(mqttTopicConfig2, buffer, true);
+  if (ok) {
+    Serial.println("[OK]");
+  } else {
+    Serial.println("[Fail]");
+  }
 }
 
 void normalLoop() {
@@ -210,10 +214,7 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
     char status[80];
     Serial.print("Received MQTT topic ");
     Serial.println(topic);
-    if (strcmp(topic, mqttTopicLastRequest) == 0) {
-      sprintf(status, "%d", lastTime);
-      mqttClient.publish(mqttTopicLast, status);
-    } else if (strcmp(topic, mqttTopicOTA) == 0) {
+    if (strcmp(topic, mqttTopicOTA) == 0) {
       otaEnabled = payload[0] == '1';
       if (otaEnabled)
         ArduinoOTA.begin();
@@ -227,7 +228,7 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
     } else if (strcmp(topic, mqttTopicTest) == 0) {
       lastTime = timeClient.getEpochTime();
       sprintf(status, "%d", lastTime);
-      mqttClient.publish(mqttTopicLast, status);
+      mqttClient.publish(mqttTopicLast, status, true);
       sprintf(status, "{\"time\": %lu, \"type\": \"Test\"}", lastTime); 
       mqttClient.publish(mqttTopicRinging, status);
     }
