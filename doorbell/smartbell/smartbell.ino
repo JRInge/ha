@@ -35,6 +35,7 @@ const char* hostname = HOST;
 const char* mqttTopicAvailability = "smartbell/"HOST"/status";
 const char* mqttTopicConfig1 = "homeassistant/device_automation/"HOST"/config";
 const char* mqttTopicConfig2 = "homeassistant/sensor/"HOST"/config";
+const char* mqttTopicConfig3 = "homeassistant/switch/"HOST"/config";
 const char* mqttTopicLast = "smartbell/"HOST"/last";
 const char* mqttTopicOTA = "smartbell/"HOST"/ota";
 const char* mqttTopicRinging = "smartbell/"HOST"/ringing";
@@ -176,6 +177,8 @@ void normalSetup() {
   ok = ok && mqttClient.publish(mqttTopicConfig1, buffer, true);
   sprintf(buffer, "{\"avty_t\": \"%s\", \"stat_t\": \"%s\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}, \"dev_cla\": \"timestamp\", \"name\": \"Last pressed\", \"uniq_id\": \"%s\", \"val_tpl\": \"{{value|int|timestamp_local}}\"}", mqttTopicAvailability, mqttTopicLast, WiFi.macAddress().c_str(), HOST, HOST);
   ok = ok && mqttClient.publish(mqttTopicConfig2, buffer, true);
+  sprintf(buffer, "{\"avty_t\": \"%s\", \"cmd_t\": \"%s\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}, \"icon\": \"mdi:doorbell\", \"name\": \"Test\", \"opt\": false, \"uniq_id\": \"%st\"}", mqttTopicAvailability, mqttTopicTest, WiFi.macAddress().c_str(), HOST, HOST);
+  ok = ok && mqttClient.publish(mqttTopicConfig3, buffer, true);
   ok = ok && updateStatus();
   if (ok) {
     Serial.println("[OK]");
