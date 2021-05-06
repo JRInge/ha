@@ -35,11 +35,11 @@ const char* hostname = HOST;
 const char* mqttTopicAvailability = "smartbell/"HOST"/status";
 const char* mqttTopicConfig1 = "homeassistant/device_automation/"HOST"/config";
 const char* mqttTopicConfig2 = "homeassistant/sensor/"HOST"/config";
+const char* mqttTopicConfig3 = "homeassistant/switch/"HOST"/config";
 const char* mqttTopicLast = "smartbell/"HOST"/last";
 const char* mqttTopicOTA = "smartbell/"HOST"/ota";
 const char* mqttTopicRinging = "smartbell/"HOST"/ringing";
 const char* mqttTopicStatus = "smartbell/"HOST"/info";
-const char* mqttTopicStatusRequest = "smartbell/"HOST"/info/get";
 const char* mqttTopicTest = "smartbell/"HOST"/test";
 
 const byte    pinRinging = 18;
@@ -63,7 +63,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Starting...");
 
-  pinMode(pinRinging, INPUT_PULLUP);
+  pinMode(pinRinging, INPUT_PULLDOWN);
 
   WiFi.hostname(hostname);
   ArduinoOTA.setHostname(hostname);
@@ -171,13 +171,15 @@ void normalSetup() {
   
   ok = mqttClient.setBufferSize(MAX_MESSAGE_LEN);
   ok = ok && mqttClient.subscribe(mqttTopicOTA);
-  ok = ok && mqttClient.subscribe(mqttTopicStatusRequest);
   ok = ok && mqttClient.subscribe(mqttTopicTest);
   ok = ok && mqttClient.publish(mqttTopicAvailability, "online", true);
   sprintf(buffer, "{\"atype\": \"trigger\", \"t\": \"%s\", \"type\": \"button_short_press\", \"stype\": \"button_1\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}}", mqttTopicRinging, WiFi.macAddress().c_str(), HOST);
   ok = ok && mqttClient.publish(mqttTopicConfig1, buffer, true);
   sprintf(buffer, "{\"avty_t\": \"%s\", \"stat_t\": \"%s\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}, \"dev_cla\": \"timestamp\", \"name\": \"Last pressed\", \"uniq_id\": \"%s\", \"val_tpl\": \"{{value|int|timestamp_local}}\"}", mqttTopicAvailability, mqttTopicLast, WiFi.macAddress().c_str(), HOST, HOST);
   ok = ok && mqttClient.publish(mqttTopicConfig2, buffer, true);
+  sprintf(buffer, "{\"avty_t\": \"%s\", \"cmd_t\": \"%s\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}, \"icon\": \"mdi:doorbell\", \"name\": \"Test\", \"opt\": false, \"uniq_id\": \"%st\"}", mqttTopicAvailability, mqttTopicTest, WiFi.macAddress().c_str(), HOST, HOST);
+  ok = ok && mqttClient.publish(mqttTopicConfig3, buffer, true);
+  ok = ok && updateStatus();
   if (ok) {
     Serial.println("[OK]");
   } else {
@@ -195,7 +197,7 @@ void normalLoop() {
 }
 
 bool checkRinging() {
-  bool nowRinging = (digitalRead(pinRinging) == HIGH); //Pulled low by optocoupler if ringing
+  bool nowRinging = (digitalRead(pinRinging) == HIGH); //Pulled high by optocoupler if ringing
 
   if (nowRinging && !isRinging && millis() - ringDebounce > 3000) {
     ringDebounce = millis();
@@ -227,10 +229,15 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
         ESP.restart();
       Serial.print("OTA update set to ");
       Serial.println(otaEnabled);
-    } else if (strcmp(topic, mqttTopicStatusRequest) == 0) {
-      sprintf(status, "%s: %d.%d.%d.%d: MQTT: %d.%d.%d.%d:%d OTA: %d", hostname, myip[0], myip[1], myip[2], myip[3], mqttServer[0], mqttServer[1], mqttServer[2], mqttServer[3], mqttPort, otaEnabled);
-      mqttClient.publish(mqttTopicStatus, status);
+      updateStatus();
     } else if (strcmp(topic, mqttTopicTest) == 0) {
       handleRing("Test");
     }
+}
+
+bool updateStatus() {
+    char status[128];
+
+    sprintf(status, "{\"name\": \"%s\", \"ip\": \"%d.%d.%d.%d\", \"broker\": \"%d.%d.%d.%d:%d\", \"ota\": %d}", hostname, myip[0], myip[1], myip[2], myip[3], mqttServer[0], mqttServer[1], mqttServer[2], mqttServer[3], mqttPort, otaEnabled);
+    return mqttClient.publish(mqttTopicStatus, status, true);
 }
