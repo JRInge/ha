@@ -195,19 +195,24 @@ void normalLoop() {
 }
 
 bool checkRinging() {
-  char status[80];
   bool nowRinging = (digitalRead(pinRinging) == HIGH); //Pulled low by optocoupler if ringing
 
   if (nowRinging && !isRinging && millis() - ringDebounce > 3000) {
     ringDebounce = millis();
-    lastTime = timeClient.getEpochTime();
-    Serial.println("Palim, palim!");
-    sprintf(status, "%d", lastTime);
-    mqttClient.publish(mqttTopicLast, status, true);
-    sprintf(status, "{\"time\": %lu, \"type\": \"Doorbell\"}", lastTime);
-    mqttClient.publish(mqttTopicRinging, status);
+    handleRing("Doorbell");
   }
   isRinging = nowRinging;
+}
+
+void handleRing(char *ringType) {
+  char status[80];
+
+  lastTime = timeClient.getEpochTime();
+  Serial.println("Palim, palim!");
+  sprintf(status, "%d", lastTime);
+  mqttClient.publish(mqttTopicLast, status, true);
+  sprintf(status, "{\"time\": %lu, \"type\": \"%s\"}", lastTime, ringType);
+  mqttClient.publish(mqttTopicRinging, status);
 }
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
@@ -226,10 +231,6 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
       sprintf(status, "%s: %d.%d.%d.%d: MQTT: %d.%d.%d.%d:%d OTA: %d", hostname, myip[0], myip[1], myip[2], myip[3], mqttServer[0], mqttServer[1], mqttServer[2], mqttServer[3], mqttPort, otaEnabled);
       mqttClient.publish(mqttTopicStatus, status);
     } else if (strcmp(topic, mqttTopicTest) == 0) {
-      lastTime = timeClient.getEpochTime();
-      sprintf(status, "%d", lastTime);
-      mqttClient.publish(mqttTopicLast, status, true);
-      sprintf(status, "{\"time\": %lu, \"type\": \"Test\"}", lastTime); 
-      mqttClient.publish(mqttTopicRinging, status);
+      handleRing("Test");
     }
 }
