@@ -62,7 +62,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Starting...");
 
-  pinMode(pinRinging, INPUT_PULLUP);
+  pinMode(pinRinging, INPUT_PULLDOWN);
 
   WiFi.hostname(hostname);
   ArduinoOTA.setHostname(hostname);
@@ -194,7 +194,7 @@ void normalLoop() {
 }
 
 bool checkRinging() {
-  bool nowRinging = (digitalRead(pinRinging) == HIGH); //Pulled low by optocoupler if ringing
+  bool nowRinging = (digitalRead(pinRinging) == HIGH); //Pulled high by optocoupler if ringing
 
   if (nowRinging && !isRinging && millis() - ringDebounce > 3000) {
     ringDebounce = millis();
