@@ -26,4 +26,13 @@
         {{ as_timestamp(state_attr('sun.sun', 'next_setting'))
         | timestamp_custom ('%H:%M') }}
       icon_template: 'mdi:weather-sunset-down'
+- platform: mqtt
+  name: "Smartbell status"
+  state_topic: 'smartbell/smartbell1/status'
+  icon: 'mdi:doorbell'
+- platform: mqtt
+  name: "RTL-SDR status"
+  state_topic: 'rtl_433/status'
+  icon: 'mdi:antenna'
 ...
+
