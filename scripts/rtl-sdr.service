@@ -1,11 +1,15 @@
 [Unit]
 Description=RTL-SDR radio receiver/decoder
 After=network-online.target dev-rtlsdr.device
-Requires=network-online.target dev-rtlsdr.device
+Requires=network-online.target dev-rtlsdr.device mosquitto.service
 
 [Service]
 ExecStart=/usr/local/bin/rtl_433 -c /etc/rtl_433.conf
+ExecStartPost=/usr/bin/mosquitto_pub -r -t rtl_433/status -m online
+ExecStopPost=/usr/bin/mosquitto_pub -r -t rtl_433/status -m offline
 Restart=always
 RestartSec=3
 User=rtlsdr
 
+[Install]
+WantedBy=mosquitto.service
