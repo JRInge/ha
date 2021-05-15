@@ -10,6 +10,22 @@ homeassistant:
 tts:
   - platform: google_translate
 
+recorder:
+  purge_keep_days: 730
+  commit_interval: 30
+  exclude:
+    entities:
+      - sensor.hp_envy_photo_7100_series_uptime
+      - sensor.power
+
+history:
+  exclude:
+    domains:
+      - automation
+      - updater
+    entities:
+      - binary_sensor.updater
+
 group: !include groups.yaml
 automation: !include_dir_merge_list automations/
 script: !include scripts.yaml
