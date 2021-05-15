@@ -11,8 +11,8 @@
   apps:
     com.sony.dtv.hbbtvplayer: BBC iPlayer
     com.sony.dtv.tvx: TV input
-#   com.google.android.tvlauncher: Android TV Launcher
-#   com.disney.disneyplus: Disney+
+    # com.google.android.tvlauncher: Android TV Launcher
+    # com.disney.disneyplus: Disney+
     at.nullptr.dlnachannels:
     com.android.providers.tv:
     com.android.systemui:
