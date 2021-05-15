@@ -4,4 +4,65 @@
   password: !secret radio_pin
 - platform: frontier_silicon
   host: kitchen-radio.local
+- platform: androidtv
+  name: Living Room TV
+  host: 192.168.0.64
+  device_class: androidtv
+  apps:
+    com.sony.dtv.hbbtvplayer: BBC iPlayer
+    com.sony.dtv.tvx: TV input
+#   com.google.android.tvlauncher: Android TV Launcher
+#   com.disney.disneyplus: Disney+
+    at.nullptr.dlnachannels:
+    com.android.providers.tv:
+    com.android.systemui:
+    com.google.android.gms.unstable:
+    com.google.android.gms:
+    com.google.android.gms.persistent:
+    'com.google.android.katniss:interactor':
+    'com.google.android.katniss:search':
+    com.google.android.tv.remote.service:
+    com.google.android.tvrecommendations:
+    com.google.process.gservices:
+    com.sony.dtv.airplayapp:
+    com.sony.dtv.audiooutput:
+    com.sony.dtv.b2b.hotelmode:
+    com.sony.dtv.braviasyncservice:
+    com.sony.dtv.connecteddevicesettings:
+    com.sony.dtv.demosupport:
+    com.sony.dtv.hddmgr:
+    com.sony.dtv.homekit:
+    com.sony.dtv.homenetwork:
+    com.sony.dtv.interactivetvutil:
+    com.sony.dtv.imeproxy:
+    com.sony.dtv.irbservice:
+    com.sony.dtv.operatorapputil.service:
+    com.sony.dtv.panelsettings:
+    com.sony.dtv.privacypolicy:
+    com.sony.dtv.provider.modelvariation:
+    com.sony.dtv.recservice:
+    com.sony.dtv.reminderservice:
+    com.sony.dtv.seconddispsetting:
+    com.sony.dtv.sonyselect:
+    com.sony.dtv.sonyvendorservice:
+    com.sony.dtv.systemupdate:
+    com.sony.dtv.timers:
+    com.sony.dtv.tvapi:
+    'com.sony.dtv.tvinput.external:remoteInputService':
+    'com.sony.dtv.tvinput.hardwaremanager:HardwareManagerService':
+    com.sony.dtv.tvinput.provider:
+    'com.sony.dtv.tvinput.tuner:remoteMetaDataManagerService':
+    'com.sony.dtv.tvinput.tuner:remoteTunerInputService':
+    'com.sony.dtv.tvsettingsbroadcast:fav_interface_service':
+    com.sony.dtv.videoframeserver:
+    com.sony.dtv.webapi.core:
+    com.sony.huey.dlna.module:
+    'com.sony.huey.dlna.module:dmr':
+    com.sony.huey.dlna.renderersettings:
+    com.uei.quicksetsdk.sony:
+    'com.vewd.core.service:browser_process':
+    'com.vewd.core.service:privileged_process0':
+    com.youview.poa:
+    org.galexander.sshd:
+    tv.samba.ssm:
 ...
