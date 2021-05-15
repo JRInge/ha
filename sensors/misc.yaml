@@ -35,4 +35,3 @@
   state_topic: 'rtl_433/status'
   icon: 'mdi:antenna'
 ...
-
