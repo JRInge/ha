@@ -10,12 +10,34 @@ homeassistant:
 tts:
   - platform: google_translate
 
+recorder:
+  purge_keep_days: 730
+  commit_interval: 30
+  exclude:
+    entities:
+      - sensor.hp_envy_photo_7100_series_uptime
+      - sensor.power
+
+history:
+  exclude:
+    domains:
+      - automation
+      - updater
+    entities:
+      - binary_sensor.updater
+
 group: !include groups.yaml
 automation: !include_dir_merge_list automations/
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
 media_player: !include players.yaml
+
+camera:
+  - platform: generic
+    name: Living Room TV Screenshot
+    still_image_url: "http://raspberrypi:8123\
+      {{ state_attr('media_player.living_room_tv_2', 'entity_picture') }}"
 
 ifttt:
   key: !secret ifttt_key
@@ -26,6 +48,12 @@ mqtt:
 discovery:
 
 sensor: !include_dir_merge_list sensors/
+
+binary_sensor:
+  - platform: ping
+    host: sylar
+    count: 2
+    scan_interval: 60
 
 rest_command:
   voice_monkey:

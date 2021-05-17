@@ -1,0 +1,24 @@
+#
+# Copyright 2012-2013 Osmocom rtl-sdr project
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# RTL2832U OEM vid/pid, e.g. ezcap EzTV668 (E4000), Newsky TV28T (E4000/R820T) etc.
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="2838", ENV{ID_SOFTWARE_RADIO}="1", MODE="0660", GROUP="plugdev"
+SUBSYSTEMS=="usb", ENV{PRODUCT}=="bda/2838/100", ACTION=="bind", RUN+="/bin/systemctl start rtl-sdr"
+SUBSYSTEMS=="usb", ENV{PRODUCT}=="bda/2838/100", ACTION=="unbind", RUN+="/bin/systemctl stop rtl-sdr"
+
+# Add symlink for radio.
+SUBSYSTEMS=="usb", ENV{ID_SOFTWARE_RADIO}=="1", SYMLINK+="rtlsdr", TAG+="systemd"
