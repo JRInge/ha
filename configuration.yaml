@@ -16,7 +16,7 @@ recorder:
   exclude:
     entities:
       - sensor.hp_envy_photo_7100_series_uptime
-      - sensor.power
+      - sensor.current
 
 history:
   exclude:
