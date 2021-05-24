@@ -8,6 +8,7 @@
 #include "smartbell_secrets.h"
 
 // Wifi details defined in smartbell_secrets.h
+const char* hostname = HOST;
 const char* ssid = SECRET_MAIN_SSID;
 const char* pass = SECRET_MAIN_PASS;
 const char* ssidFallback = SECRET_FALLBACK_SSID;
@@ -29,9 +30,7 @@ const char* passFallback = SECRET_FALLBACK_PASS;
 // long after a short outage of your infrastructure.
 
 #define MAX_MESSAGE_LEN 512
-#define HOST "smartbell2"
 
-const char* hostname = HOST;
 const char* mqttTopicAvailability = "smartbell/"HOST"/status";
 const char* mqttTopicConfig1 = "homeassistant/device_automation/"HOST"/config";
 const char* mqttTopicConfig2 = "homeassistant/binary_sensor/"HOST"/config";
