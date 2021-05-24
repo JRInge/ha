@@ -175,13 +175,13 @@ void normalSetup() {
   ok = ok && mqttClient.subscribe(mqttTopicTest);
   ok = ok && mqttClient.publish(mqttTopicAvailability, "online", true);
   snprintf(buffer, MAX_MESSAGE_LEN, "{\"atype\": \"trigger\", \"t\": \"%s\", \"type\": \"button_short_press\", \"stype\": \"button_1\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}}", mqttTopicRinging, WiFi.macAddress().c_str(), HOST);
-  ok = ok && mqttClient.publish(mqttTopicConfig1, buffer, true);
+  ok = ok && mqttClient.publish(mqttTopicConfig1, buffer);
   snprintf(buffer, MAX_MESSAGE_LEN, "{\"stat_t\": \"%s\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}, \"dev_cla\": \"connectivity\", \"icon\": \"mdi:doorbell\", \"json_attr_t\": \"%s\", \"name\": \"Smartbell Status\", \"uniq_id\": \"%ss\", \"pl_on\": \"online\", \"pl_off\": \"offline\"}", mqttTopicAvailability, WiFi.macAddress().c_str(), HOST, mqttTopicStatus, HOST);
-  ok = ok && mqttClient.publish(mqttTopicConfig2, buffer, true);
+  ok = ok && mqttClient.publish(mqttTopicConfig2, buffer);
   snprintf(buffer, MAX_MESSAGE_LEN, "{\"avty_t\": \"%s\", \"stat_t\": \"%s\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}, \"dev_cla\": \"timestamp\", \"name\": \"Last doorbell press\", \"uniq_id\": \"%s\", \"val_tpl\": \"{{value|int|timestamp_local}}\"}", mqttTopicAvailability, mqttTopicLast, WiFi.macAddress().c_str(), HOST, HOST);
-  ok = ok && mqttClient.publish(mqttTopicConfig3, buffer, true);
+  ok = ok && mqttClient.publish(mqttTopicConfig3, buffer);
   snprintf(buffer, MAX_MESSAGE_LEN, "{\"avty_t\": \"%s\", \"cmd_t\": \"%s\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}, \"icon\": \"mdi:doorbell\", \"name\": \"Test doorbell\", \"opt\": false, \"uniq_id\": \"%st\"}", mqttTopicAvailability, mqttTopicTest, WiFi.macAddress().c_str(), HOST, HOST);
-  ok = ok && mqttClient.publish(mqttTopicConfig4, buffer, true);
+  ok = ok && mqttClient.publish(mqttTopicConfig4, buffer);
   ok = ok && updateStatus();
   if (ok) {
     Serial.println("[OK]");
@@ -228,8 +228,11 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
       otaEnabled = payload[0] == '1';
       if (otaEnabled)
         ArduinoOTA.begin();
-      else
+      else {
+        mqttClient.publish(mqttTopicAvailability, "offline", true);
+        mqttClient.disconnect();
         ESP.restart();
+      }
       Serial.print("OTA update set to ");
       Serial.println(otaEnabled);
       updateStatus();
