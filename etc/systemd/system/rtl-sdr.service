@@ -4,7 +4,7 @@ After=network-online.target dev-rtlsdr.device
 Requires=network-online.target dev-rtlsdr.device mosquitto.service
 
 [Service]
-ExecStartPre=/usr/bin/mosquitto_pub -t homeassistant/binary_sensor/rtl_sdr/config -m '{"stat_t":"rtl_433/status","dev":{"mf":"NooElec","mdl":"NESDR Nano 2+","ids":"RTL2838UHIDIR","name":"RTL-SDR","via_device":"MQTT broker"},"dev_cla":"connectivity","ic":"mdi:antenna","name":"RTL-SDR Status","uniq_id":"rtl_sdr","pl_on":"online","pl_off":"offline"}'
+ExecStartPre=/usr/bin/mosquitto_pub -r -t homeassistant/binary_sensor/rtl_sdr/config -m '{"stat_t":"rtl_433/status","dev":{"mf":"NooElec","mdl":"NESDR Nano 2+","ids":"RTL2838UHIDIR","name":"RTL-SDR","via_device":"MQTT broker"},"dev_cla":"connectivity","ic":"mdi:antenna","name":"RTL-SDR Status","uniq_id":"rtl_sdr","pl_on":"online","pl_off":"offline"}'
 ExecStart=/usr/local/bin/rtl_433 -c /etc/rtl_433.conf
 ExecStartPost=/usr/bin/mosquitto_pub -r -t rtl_433/status -m online
 ExecStopPost=/usr/bin/mosquitto_pub -r -t rtl_433/status -m offline
