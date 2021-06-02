@@ -1,0 +1,19 @@
+---
+# Automations for Frontier Silicon radios
+########
+
+- id: '1622581753673'
+  alias: Idle Radio
+  description: Turn off kitchen radio when it has been idle for 10 minutes
+  trigger:
+  - platform: state
+    entity_id: media_player.kitchen_radio
+    to: 'idle'
+    for: '00:10:00'
+  condition: []
+  action:
+  - service: media_player.turn_off
+    target:
+      entity_id: media_player.kitchen_radio
+  mode: single
+...
