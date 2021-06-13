@@ -11,25 +11,29 @@
   unit_of_measurement: 'cases/100k'
   scan_interval: 21600
 
+#
+# Alert levels are not currently being published
+########
+
 # City-wide COVID alert level
-- platform: command_line
-  command: >
-    /home/homeassistant/scripts/fetch_covid_alert
-    "`/home/homeassistant/scripts/hass_secret ltla`"
-  name: covid_alert_raw
-  json_attributes:
-    - level
-    - name
-    - url
-    - date
-  value_template: '{{ value_json }}'
-  scan_interval: 21600
+#- platform: command_line
+#  command: >
+#    /home/homeassistant/scripts/fetch_covid_alert
+#    "`/home/homeassistant/scripts/hass_secret ltla`"
+#  name: covid_alert_raw
+#  json_attributes:
+#    - level
+#    - name
+#    - url
+#    - date
+#  value_template: '{{ value_json }}'
+#  scan_interval: 21600
 
 # Formatted alert level
-- platform: template
-  sensors:
-    covid_alert:
-      icon_template: 'mdi:alert-outline'
-      friendly_name: 'Alert Level'
-      value_template: "{{ state_attr('sensor.covid_alert_raw', 'name') }}"
+#- platform: template
+#  sensors:
+#    covid_alert:
+#      icon_template: 'mdi:alert-outline'
+#      friendly_name: 'Alert Level'
+#      value_template: "{{ state_attr('sensor.covid_alert_raw', 'name') }}"
 ...
