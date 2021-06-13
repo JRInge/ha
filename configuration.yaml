@@ -51,7 +51,7 @@ sensor: !include_dir_merge_list sensors/
 
 binary_sensor:
   - platform: ping
-    host: sylar
+    host: sylar.local
     count: 2
     scan_interval: 60
 
