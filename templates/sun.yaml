@@ -14,4 +14,3 @@
         | timestamp_custom ('%H:%M') }}
       icon: 'mdi:weather-sunset-down'
 ...
-
