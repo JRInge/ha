@@ -48,6 +48,7 @@ mqtt:
 discovery:
 
 sensor: !include_dir_merge_list sensors/
+template: !include_dir_merge_list templates/
 
 binary_sensor:
   - platform: ping
