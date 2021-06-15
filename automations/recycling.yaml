@@ -2,19 +2,6 @@
 # Automations for recycling sensors
 ########
 
-# Reformat next date templates for each new day.
-
-- id: '1611828376879'
-  alias: Update bin days
-  trigger:
-    - platform: time
-      at: 00:05:00
-  action:
-    - service: homeassistant.update_entity
-      entity_id:
-        - sensor.green_bin_day
-        - sensor.black_bin_day
-
 - id: '1611943017008'
   alias: Bin day notification
   description: >
