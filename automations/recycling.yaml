@@ -13,10 +13,10 @@
     - condition: or
       conditions:
         - condition: state
-          entity_id: sensor.black_bin_day
+          entity_id: sensor.black_bin
           state: Today
         - condition: state
-          entity_id: sensor.green_bin_day
+          entity_id: sensor.green_bin
           state: Today
   action:
     - service: script.ifttt_notification
