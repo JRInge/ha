@@ -24,7 +24,7 @@
         title: Bin day
         message: |
           {% set colour = 'Black' -%}
-          {% if is_state('sensor.green_bin_day', 'Today') -%}
+          {% if is_state('sensor.green_bin', 'Today') -%}
             {% set colour = 'Green' %}
           {%- endif -%} {{ colour }} Bin Day
   mode: single
