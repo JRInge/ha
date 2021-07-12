@@ -12,9 +12,9 @@
       for: '00:10:00'
   condition: []
   action:
-  - service: media_player.turn_off
-    target:
-      entity_id: media_player.kitchen_radio
+    - service: media_player.turn_off
+      target:
+        entity_id: media_player.kitchen_radio
   mode: single
 - id: '1622532153673'
   alias: Idle Living Room TV
@@ -26,9 +26,9 @@
       for: '00:05:00'
   condition: []
   action:
-  - service: media_player.turn_off
-    target:
-      entity_id: media_player.living_room_tv_2
+    - service: media_player.turn_off
+      target:
+        entity_id: media_player.living_room_tv_2
   mode: single
 - id: '1622532153674'
   alias: Kitchen TV power saver
