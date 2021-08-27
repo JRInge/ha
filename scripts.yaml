@@ -52,6 +52,6 @@ doorbell_alert_james:
     - service: script.ifttt_notification
       data:
         title: HomeAssistant Alert
-        message: Doorbell pressed
+        message: "Doorbell pressed at {{ now().hour }}:{{ now().minute }}"
         url: 'http://raspberrypi:8123/lovelace/doorbell'
 ...
