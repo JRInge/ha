@@ -1,0 +1,28 @@
+---
+# Automations for COVID data
+########
+
+automation:
+  - id: '1611945742569'
+    alias: COVID Alert
+    description: Send IFTTT notification if COVID rate or alert level changes.
+    trigger:
+      - platform: state
+        entity_id: sensor.covid_alert_raw
+        attribute: level
+      - platform: state
+        entity_id: sensor.covid_rate
+    condition:
+      - condition: time
+        after: 06:00:00
+        before: '23:00:00'
+    action:
+      - service: script.ifttt_notification
+        data:
+          title: COVID Alert
+          message: >
+            {{ state_attr('sensor.covid_alert_raw', 'name') }},
+            {{ states('sensor.covid_rate') }}/100k people.
+          url: !secret local_covid_url
+    mode: single
+...

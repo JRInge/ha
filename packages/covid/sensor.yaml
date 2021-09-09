@@ -2,14 +2,15 @@
 # COVID-19 info sensors
 ########
 
+sensor:
 # Local case rate
-- platform: command_line
-  command: >
-    /home/homeassistant/scripts/fetch_covid_rate.py
-    "`/home/homeassistant/scripts/hass_secret postcode`"
-  name: covid_rate
-  unit_of_measurement: 'cases/100k'
-  scan_interval: 21600
+  - platform: command_line
+    command: >
+      /home/homeassistant/scripts/fetch_covid_rate.py
+      "`/home/homeassistant/scripts/hass_secret postcode`"
+    name: covid_rate
+    unit_of_measurement: 'cases/100k'
+    scan_interval: 21600
 
 #
 # Alert levels are not currently being published
