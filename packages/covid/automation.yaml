@@ -1,7 +1,6 @@
 ---
 # Automations for COVID data
 ########
-
 automation:
   - id: '1611945742569'
     alias: COVID Alert
@@ -21,8 +20,9 @@ automation:
         data:
           title: COVID Alert
           message: >
-            {{ state_attr('sensor.covid_alert_raw', 'name') }},
-            {{ states('sensor.covid_rate') }}/100k people.
+            {% if not states('sensor.covid_alert_raw') == 'unknown' -%}
+            {{ state_attr('sensor.covid_alert_raw', 'name') }}, {% endif %}
+            {{- states('sensor.covid_rate') }}/100k people.
           url: !secret local_covid_url
     mode: single
 ...
