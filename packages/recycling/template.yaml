@@ -1,0 +1,64 @@
+---
+# Recycling info templates
+########
+
+template:
+  - trigger:
+      - platform: time
+        at: '00:10:00'
+      - platform: state
+        entity_id: sensor.bin_day
+      - platform: homeassistant
+        event: start
+      - platform: event
+        event_type: event_template_reloaded
+    sensor:
+      - name: 'Green bin'
+        icon: 'mdi:trash-can-outline'
+        state: >
+          {% set next_day =
+                 state_attr('sensor.bin_day', 'bins')['Green']['next_date'] -%}
+          {% set last_day =
+                 state_attr('sensor.bin_day', 'bins')['Green']['last_date'] -%}
+          {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
+                        'Friday', 'Saturday', 'Sunday'] -%}
+          {% set months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] -%}
+          {% set next_dt = strptime(next_day, "%Y-%m-%d") -%}
+          {% if now() | as_timestamp - last_day | as_timestamp < 86400
+             or next_day | as_timestamp - now() | as_timestamp < 0 -%}
+            Today
+          {%- elif next_day | as_timestamp - now() | as_timestamp < 86400 -%}
+            Tomorrow
+          {%- elif next_day | as_timestamp - now() | as_timestamp < 518400 -%}
+            {{ days[next_dt.weekday()] }}
+          {%- else -%}
+            {{ days[next_dt.weekday()][:2] }}
+            {{ next_dt.day }}
+            {{ months[next_dt.month] }}
+          {%- endif %}
+      - name: 'Black bin'
+        icon: 'mdi:trash-can'
+        state: >
+          {% set next_day =
+                 state_attr('sensor.bin_day', 'bins')['Black']['next_date'] -%}
+          {% set last_day =
+                 state_attr('sensor.bin_day', 'bins')['Black']['last_date'] -%}
+          {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
+                        'Friday', 'Saturday', 'Sunday'] -%}
+          {% set months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] -%}
+          {% set next_dt = strptime(next_day, "%Y-%m-%d") -%}
+          {% if now() | as_timestamp - last_day | as_timestamp < 86400
+             or next_day | as_timestamp - now() | as_timestamp < 0 -%}
+            Today
+          {%- elif next_day | as_timestamp - now() | as_timestamp < 86400 -%}
+            Tomorrow
+          {%- elif next_day | as_timestamp - now() | as_timestamp < 518400 -%}
+            {{ days[next_dt.weekday()] }}
+          {%- else -%}
+            {{ days[next_dt.weekday()][:2] }}
+            {{ next_dt.day }}
+            {{ months[next_dt.month] }}
+          {%- endif %}
+...
