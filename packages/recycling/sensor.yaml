@@ -2,16 +2,17 @@
 # Recycling info sensors
 ########
 
-sensor:
-  - platform: command_line
-    command: >
-      /home/homeassistant/scripts/fetch_bin_collections.py
-      `/home/homeassistant/scripts/hass_secret bristol_uprn`
-    name: 'Bin Day'
-    json_attributes:
-      - bins
-      - status
-    scan_interval: 84000
-    command_timeout: 20
-    value_template: '{{ value_json }}'
+recycling_sensor:
+  sensor:
+    - platform: command_line
+      command: >
+        /home/homeassistant/scripts/fetch_bin_collections.py
+        `/home/homeassistant/scripts/hass_secret bristol_uprn`
+      name: 'Bin Day'
+      json_attributes:
+        - bins
+        - status
+      scan_interval: 84000
+      command_timeout: 20
+      value_template: '{{ value_json }}'
 ...
