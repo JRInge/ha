@@ -18,9 +18,9 @@ recycling_template:
           icon: 'mdi:trash-can-outline'
           state: >
             {% set next_day =
-                   state_attr('sensor.bin_day', 'bins')['Green']['next_date'] -%}
+                state_attr('sensor.bin_day', 'bins')['Green']['next_date'] -%}
             {% set last_day =
-                   state_attr('sensor.bin_day', 'bins')['Green']['last_date'] -%}
+                state_attr('sensor.bin_day', 'bins')['Green']['last_date'] -%}
             {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
                           'Friday', 'Saturday', 'Sunday'] -%}
             {% set months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -42,9 +42,9 @@ recycling_template:
           icon: 'mdi:trash-can'
           state: >
             {% set next_day =
-                   state_attr('sensor.bin_day', 'bins')['Black']['next_date'] -%}
+                state_attr('sensor.bin_day', 'bins')['Black']['next_date'] -%}
             {% set last_day =
-                   state_attr('sensor.bin_day', 'bins')['Black']['last_date'] -%}
+                state_attr('sensor.bin_day', 'bins')['Black']['last_date'] -%}
             {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
                           'Friday', 'Saturday', 'Sunday'] -%}
             {% set months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',

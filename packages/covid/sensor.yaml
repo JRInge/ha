@@ -4,7 +4,7 @@
 
 covid_sensor:
   sensor:
-  # Local case rate
+    # Local case rate
     - platform: command_line
       command: >
         /home/homeassistant/scripts/fetch_covid_rate.py
