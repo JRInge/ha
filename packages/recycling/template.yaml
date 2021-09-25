@@ -17,49 +17,63 @@ recycling_template:
         - name: 'Green bin'
           icon: 'mdi:trash-can-outline'
           state: >
-            {% set next_day =
-                state_attr('sensor.bin_day', 'bins')['Green']['next_date'] -%}
-            {% set last_day =
-                state_attr('sensor.bin_day', 'bins')['Green']['last_date'] -%}
-            {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
-                          'Friday', 'Saturday', 'Sunday'] -%}
-            {% set months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] -%}
-            {% set next_dt = strptime(next_day, "%Y-%m-%d") -%}
-            {% if now() | as_timestamp - last_day | as_timestamp < 86400
-               or next_day | as_timestamp - now() | as_timestamp < 0 -%}
-              Today
-            {%- elif next_day | as_timestamp - now() | as_timestamp < 86400 -%}
-              Tomorrow
-            {%- elif next_day | as_timestamp - now() | as_timestamp < 518400 -%}
-              {{ days[next_dt.weekday()] }}
-            {%- else -%}
-              {{ days[next_dt.weekday()][:2] }}
-              {{ next_dt.day }}
-              {{ months[next_dt.month] }}
+            {% set colour = 'Green' %}
+            {% set last_ts =
+                state_attr('sensor.bin_day', 'bins')[colour]['last_date']
+                | as_timestamp() -%}
+            {% set next_ts =
+                state_attr('sensor.bin_day', 'bins')[colour]['next_date']
+                | as_timestamp() -%}
+            {% if next_date == None %}
+              Unknown
+            {%- else %}
+              {% set now_ts = now() | as_timestamp %}
+              {% if next_ts - now_ts < 0 -%}
+                 {% if next_ts | timestamp_custom('%d', True)
+                       == now_ts | timestamp_custom('%d', True) %}
+                    Today
+                 {%- else %}
+                    Overdue
+                 {%- endif %}
+              {%- elif now_ts - last_ts < 86400 %}
+                Today
+              {%- elif next_ts - now_ts < 86400 -%}
+                Tomorrow
+              {%- elif next_ts - now_ts < 518400 -%}
+                {{ next_ts | timestamp_custom('%A', True) }}
+              {%- else -%}
+                {{ next_ts | timestamp_custom('%a %b %-d', True) }}
+              {%- endif %}
             {%- endif %}
         - name: 'Black bin'
           icon: 'mdi:trash-can'
           state: >
-            {% set next_day =
-                state_attr('sensor.bin_day', 'bins')['Black']['next_date'] -%}
-            {% set last_day =
-                state_attr('sensor.bin_day', 'bins')['Black']['last_date'] -%}
-            {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
-                          'Friday', 'Saturday', 'Sunday'] -%}
-            {% set months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] -%}
-            {% set next_dt = strptime(next_day, "%Y-%m-%d") -%}
-            {% if now() | as_timestamp - last_day | as_timestamp < 86400
-               or next_day | as_timestamp - now() | as_timestamp < 0 -%}
-              Today
-            {%- elif next_day | as_timestamp - now() | as_timestamp < 86400 -%}
-              Tomorrow
-            {%- elif next_day | as_timestamp - now() | as_timestamp < 518400 -%}
-              {{ days[next_dt.weekday()] }}
-            {%- else -%}
-              {{ days[next_dt.weekday()][:2] }}
-              {{ next_dt.day }}
-              {{ months[next_dt.month] }}
+            {% set colour = 'Black' %}
+            {% set last_ts =
+                state_attr('sensor.bin_day', 'bins')[colour]['last_date']
+                | as_timestamp() -%}
+            {% set next_ts =
+                state_attr('sensor.bin_day', 'bins')[colour]['next_date']
+                | as_timestamp() -%}
+            {% if next_date == None %}
+              Unknown
+            {%- else %}
+              {% set now_ts = now() | as_timestamp %}
+              {% if next_ts - now_ts < 0 -%}
+                 {% if next_ts | timestamp_custom('%d', True)
+                       == now_ts | timestamp_custom('%d', True) %}
+                    Today
+                 {%- else %}
+                    Overdue
+                 {%- endif %}
+              {%- elif now_ts - last_ts < 86400 %}
+                Today
+              {%- elif next_ts - now_ts < 86400 -%}
+                Tomorrow
+              {%- elif next_ts - now_ts < 518400 -%}
+                {{ next_ts | timestamp_custom('%A', True) }}
+              {%- else -%}
+                {{ next_ts | timestamp_custom('%a %b %-d', True) }}
+              {%- endif %}
             {%- endif %}
 ...
