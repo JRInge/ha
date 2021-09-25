@@ -5,7 +5,7 @@ default_config:
 # Include customizations automatically
 homeassistant:
   customize: !include customize.yaml
-  packages: !include_dir_named packages
+  packages: !include_dir_merge_named packages
 
 # Text to speech
 tts:
