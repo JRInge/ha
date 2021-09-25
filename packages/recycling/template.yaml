@@ -24,7 +24,7 @@ recycling_template:
             {% set next_ts =
                 state_attr('sensor.bin_day', 'bins')[colour]['next_date']
                 | as_timestamp() -%}
-            {% if next_date == None %}
+            {% if next_ts == None %}
               Unknown
             {%- else %}
               {% set now_ts = now() | as_timestamp %}
@@ -55,7 +55,7 @@ recycling_template:
             {% set next_ts =
                 state_attr('sensor.bin_day', 'bins')[colour]['next_date']
                 | as_timestamp() -%}
-            {% if next_date == None %}
+            {% if next_ts == None %}
               Unknown
             {%- else %}
               {% set now_ts = now() | as_timestamp %}
