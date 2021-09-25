@@ -1,0 +1,21 @@
+---
+# Power consumption template
+########
+
+energy_template:
+  template:
+    - sensor:
+        - name: Power
+          device_class: power
+          attributes:
+            time: "{{ state_attr('sensor.current', 'time') }}"
+          availability: >
+            {{ not is_state('sensor.current', 'unavailable') }}
+          state: >
+            {{ (states('sensor.current')
+              | float * 244)
+              | round / 1000
+            }}
+          unique_id: 34743b
+          unit_of_measurement: kW
+...
