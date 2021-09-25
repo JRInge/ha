@@ -5,8 +5,9 @@
 #
 
 from argparse import ArgumentParser, Namespace
+import json
 import requests
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 service_url = ('https://bcprdapidyna002.azure-api.net/'
                'bcprdfundyna001-alloy/NextCollectionDates')
@@ -25,39 +26,35 @@ def get_args() -> Namespace:
     return parser.parse_args()
 
 
-def parse(r: Dict[str, Any]) -> str:
-    bins = {
-        '180L General Waste': 'Black',
-        '240L Garden Waste Bin': 'Green'
+def parse(r: Dict[str, Any]) -> Dict[str, Dict[str, str]]:
+    bins = [
+        {
+            'name': 'Black',
+            'description': '180L General Waste'
+        },
+        {
+            'name': 'Green',
+            'description': '240L Garden Waste Bin'
         }
+    ]
 
-    def parse_container(container: Dict[str, Any]) -> Optional[str]:
-        friendly_name = bins.get(container['containerName'])
-        if friendly_name is not None:
-            # Assume only one round per container, trim time off datetime
-            # of collection.
-            last_date = container['collection'][0]['lastCollectionDate'][:10]
-            next_date = container['collection'][0]['nextCollectionDate'][:10]
-            return (
-                f'"{friendly_name}": {{'
-                f'"last_date": "{last_date}", '
-                f'"next_date": "{next_date}"}}')
+    def find_collection(description: str) -> Dict[str, str]:
+        container = list(filter(lambda x: x['containerName'] == description,
+                         r['data']))
+
+        if container != []:
+            collection = list(container)[0]['collection'][0]
+            return {
+               'last_date': collection['lastCollectionDate'][:10],
+               'next_date': collection['nextCollectionDate'][:10]
+            }
         else:
-            return None
+            return {
+               'last_date': 'Unknown',
+               'next_date': 'Unknown'
+            }
 
-    collections = map(parse_container, r["data"])
-    if collections is not None:
-        filtered = ", ".join(filter(lambda x: x is not None,
-                                    list(collections)))  # type: ignore
-        return (
-            f'{{"status": "{r["status"]}", '
-            f'"bins": {{{filtered}}}}}')
-    else:
-        return ('{{'
-                '"status":"Failed", '
-                '"status_code": "404", '
-                '"error": "Couldn\'t find collections in server response"'
-                '}}')
+    return {bin['name']: find_collection(bin['description']) for bin in bins}
 
 
 if __name__ == '__main__':
@@ -69,10 +66,13 @@ if __name__ == '__main__':
         headers=api_key_header)
 
     if response.ok:
-        print(f"{parse(response.json())}")
+        print(json.dumps({
+                            'status': 'OK',
+                            'bins': parse(response.json())
+                        }))
     else:
-        print((f'{{'
-               f'"status":"Failed", '
-               f'"status_code": "{response.status_code}", '
-               f'"error": "{response.reason}"'
-               f'}}'))
+        print(json.dumps({
+                            'status': 'Failed',
+                            'status_code': response.status_code,
+                            'error': response.reason
+                         }))
