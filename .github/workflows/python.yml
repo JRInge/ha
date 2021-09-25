@@ -36,6 +36,7 @@ jobs:
       - name: Install Mypy
         run: |
           pip install mypy
+          pip install -r scripts/requirements-mypy.txt
       - name: mypy
         run: |
           mypy scripts/
