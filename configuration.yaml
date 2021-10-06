@@ -51,12 +51,6 @@ discovery:
 sensor: !include_dir_merge_list sensors/
 template: !include_dir_merge_list templates/
 
-binary_sensor:
-  - platform: ping
-    host: sylar.local
-    count: 2
-    scan_interval: 60
-
 rest_command:
   voice_monkey:
     url: https://api.voicemonkey.io/trigger
