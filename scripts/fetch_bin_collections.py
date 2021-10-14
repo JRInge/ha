@@ -5,6 +5,7 @@
 #
 
 from argparse import ArgumentParser, Namespace
+from datetime import datetime
 import json
 import requests
 from typing import Any, Dict
@@ -38,6 +39,13 @@ def parse(r: Dict[str, Any]) -> Dict[str, Dict[str, str]]:
         }
     ]
 
+    def check_date(date: str) -> str:
+        try:
+            datetime.strptime(date, "%Y-%m-%d")
+            return date
+        except ValueError:
+            return "Unknown"
+
     def find_collection(description: str) -> Dict[str, str]:
         container = list(filter(lambda x: x['containerName'] == description,
                          r['data']))
@@ -45,8 +53,8 @@ def parse(r: Dict[str, Any]) -> Dict[str, Dict[str, str]]:
         if container != []:
             collection = list(container)[0]['collection'][0]
             return {
-               'last_date': collection['lastCollectionDate'][:10],
-               'next_date': collection['nextCollectionDate'][:10]
+               'last_date': check_date(collection['lastCollectionDate'][:10]),
+               'next_date': check_date(collection['nextCollectionDate'][:10])
             }
         else:
             return {
