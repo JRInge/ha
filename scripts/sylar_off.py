@@ -29,6 +29,7 @@ def shutdown_nas(url: str, password: str) -> None:
     except ConnectionError:
         print("[Can't connect]")
 
+
 if __name__ == '__main__':
     args = get_args()
     shutdown_nas(f'http://{args.host}/', args.password)
