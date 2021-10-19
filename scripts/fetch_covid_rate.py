@@ -8,7 +8,7 @@ from argparse import ArgumentParser, Namespace
 from urllib.parse import quote_plus
 from urllib.request import urlopen
 from bs4 import BeautifulSoup      # type: ignore
-from bs4.element import ResultSet, Tag  # type: ignore
+import json
 
 url: str = "https://coronavirus.data.gov.uk/search?postcode="
 
@@ -23,10 +23,17 @@ def get_args() -> Namespace:
 if __name__ == '__main__':
     args = get_args()
     html = urlopen(url + quote_plus(args.postcode))
+    result = {
+        'rate': 'Unknown',
+        'date': 'Unknown'
+    }
     soup: BeautifulSoup = BeautifulSoup(html, 'lxml')
-    tags: ResultSet = soup.find_all('strong')
-    x: Tag
-    for x in tags:
-        if "Rate per 100k" in x.parent.text:
-            print(x.text)
+    for x in soup.find_all('strong'):
+        if "Rate per 100" in x.parent.text:
+            result.update({'rate': x.text})
             break
+    for x in soup.find_all('time'):
+        if x.parent['id'] == "last-update" and x.has_attr('datetime'):
+            result.update({'date': x['datetime']})
+            break
+    print(json.dumps(result))

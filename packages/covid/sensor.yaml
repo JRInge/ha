@@ -12,6 +12,9 @@ covid_sensor:
       name: covid_rate
       unit_of_measurement: 'cases/100k'
       scan_interval: 21600
+      json_attributes:
+        - date
+      value_template: "{{ value_json.rate }}"
 
 #
 # Alert levels are not currently being published

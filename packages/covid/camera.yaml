@@ -1,0 +1,16 @@
+---
+# COVID-19 info images
+########
+
+covid_camera:
+  input_text:
+    msoa:
+      initial: !secret msoa
+  camera:
+    - platform: generic
+      name: Local COVID level
+      still_image_url: "https://coronavirus.data.gov.uk/\
+        public/assets/frontpage/scales/\
+        {{ state_attr( 'sensor.covid_rate', 'date')[:10] }}\
+        /msoa/{{ states('input_text.msoa') }}.jpg"
+...

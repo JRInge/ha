@@ -2,6 +2,9 @@
 # Automations for COVID data
 ########
 covid_automation:
+  input_text:
+    postcode:
+      initial: !secret postcode
   automation:
     - id: '1611945742569'
       alias: COVID Alert
@@ -24,6 +27,7 @@ covid_automation:
               {% if not states('sensor.covid_alert_raw') == 'unknown' -%}
               {{ state_attr('sensor.covid_alert_raw', 'name') }}, {% endif %}
               {{- states('sensor.covid_rate') }}/100k people.
-            url: !secret local_covid_url
+            url: "https://coronavirus.data.gov.uk/search?postcode=\
+              {{- states('input_text.postcode') | replace(' ', '+') -}}"
       mode: single
 ...
