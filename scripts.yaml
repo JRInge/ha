@@ -22,7 +22,7 @@ alexa_notification:
         image: '{{ image }}'
         video: '{{ video }}'
   mode: parallel
-  icon: mdi:amazon-alexa
+  icon: mdi:hockey-puck 
 doorbell_alert_alexa:
   alias: Alexa doorbell alerts
   sequence:
