@@ -14,6 +14,8 @@ class NASAPI(object):
         'used': r'class="content30_2_2">([0-9.]+)&nbsp;GB',
         'total': r'GB&nbsp;/&nbsp;([0-9.]+)&nbsp;GB',
         'url': r'cgi-bin/top\.cgi$',
+        'reboot': r'Rebooting the LinkStation now.',
+        'shutdown': r'shutdown process is complete',
     }
 
     def __init__(self,
@@ -41,7 +43,9 @@ class NASAPI(object):
         if name in self.regexps:
             result = re.search(self.regexps[name], text)
             if result is not None:
-                return result.groups()[0]
+                if result.lastindex is None:
+                    return result.group(0)
+                return result.group(result.lastindex)
         return None
 
     def call(self, params: Dict[str, str]) -> str:
@@ -73,7 +77,7 @@ class NASAPI(object):
                                % self.nas_url)
         except requests.exceptions.RequestException:
             raise ConnectionError("NASAPI could not connect to %s"
-                               % self.nas_url)
+                                  % self.nas_url)
 
     def shutdown(self) -> bool:
         result = self.call({
@@ -81,8 +85,7 @@ class NASAPI(object):
             'gMode': 'shutdown',
             'gType': 'shutdown',
         })
-        # TODO: Check status OK
-        return True
+        return (self.__find_value('shutdown', result) is not None)
 
     def restart(self) -> bool:
         result = self.call({
@@ -90,8 +93,7 @@ class NASAPI(object):
             'gMode': 'shutdown',
             'gType': 'reboot',
         })
-        # TODO: Check status OK
-        return True
+        return (self.__find_value('reboot', result) is not None)
 
     @property
     def capacity(self) -> Dict[str, float]:

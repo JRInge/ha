@@ -17,17 +17,19 @@ def get_args() -> Namespace:
 
 
 def shutdown_nas(url: str, password: str) -> None:
-    print('Shutting down NAS at %s: ' % url, end='')
+    print('Shutting down NAS at %s... ' % url, end='', flush=True)
     try:
         nas = NASAPI(url, password)
         if nas.shutdown():
             print('[OK]')
+            exit(0)
         else:
             print('[Failed]')
     except TimeoutError:
         print('[No response]')
     except ConnectionError:
         print("[Can't connect]")
+    exit(1)
 
 
 if __name__ == '__main__':
