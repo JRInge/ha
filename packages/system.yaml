@@ -1,5 +1,5 @@
 ---
-# Miscellaneous sensors
+# Miscellaneous system sensors
 ########
 
 system_sensors:
@@ -14,4 +14,25 @@ system_sensors:
       unit_of_measurement: "°C"
       scan_interval: 60
       value_template: "{{ value | multiply(0.001) | round(1) }}"
+  automation:
+    - id: '1623179067278'
+      alias: "Update Available Notification"
+      trigger:
+        - platform: state
+          entity_id: binary_sensor.updater
+          from: "off"
+          to: "on"
+      action:
+        - service: persistent_notification.create
+          data:
+            message: >
+              **Home Assistant
+              {{ state_attr('binary_sensor.updater', 'newest_version') }}
+              is available.**
+
+
+              See [Release Notes](
+              {{ state_attr('binary_sensor.updater', 'release_notes') }}
+              ) and [Update Instructions](
+              https://www.home-assistant.io/common-tasks/core/).
 ...
