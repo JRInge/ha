@@ -28,10 +28,9 @@ if __name__ == '__main__':
         'date': 'Unknown'
     }
     soup: BeautifulSoup = BeautifulSoup(html, 'lxml')
-    for x in soup.find_all('strong'):
-        if "Rate per 100" in x.parent.text:
-            result.update({'rate': x.text})
-            break
+    x = soup.find_all('span', {'class', 'number-link'})
+    if len(x) > 1:
+        result.update({'rate': x[1].text})
     for x in soup.find_all('time'):
         if x.parent['id'] == "last-update" and x.has_attr('datetime'):
             result.update({'date': x['datetime']})
