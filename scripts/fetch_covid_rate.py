@@ -32,7 +32,9 @@ if __name__ == '__main__':
     if len(x) > 1:
         result.update({'rate': x[1].text})
     for x in soup.find_all('time'):
-        if x.parent['id'] == "last-update" and x.has_attr('datetime'):
+        if x.parent.has_attr('id') and \
+           x.parent['id'] == "last-update" and \
+           x.has_attr('datetime'):
             result.update({'date': x['datetime']})
             break
     print(json.dumps(result))
