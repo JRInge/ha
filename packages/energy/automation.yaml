@@ -52,7 +52,7 @@ energy_automation:
           state: "on"
         - condition: numeric_state
           entity_id: "{{ power_entity }}"
-          below: {{ idle_power }}
+          below: "{{ idle_power }}"
         - service: switch.turn_off
           target:
             entity_id: "{{ switch_entity }}"
