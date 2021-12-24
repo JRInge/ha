@@ -30,12 +30,15 @@ const char* passFallback = SECRET_FALLBACK_PASS;
 // long after a short outage of your infrastructure.
 
 #define MAX_MESSAGE_LEN 512
+#define DEVICE_INFO "{\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}"
 
 const char* mqttTopicAvailability = "smartbell/"HOST"/status";
 const char* mqttTopicConfig1 = "homeassistant/device_automation/"HOST"/config";
 const char* mqttTopicConfig2 = "homeassistant/binary_sensor/"HOST"/config";
 const char* mqttTopicConfig3 = "homeassistant/sensor/"HOST"/config";
-const char* mqttTopicConfig4 = "homeassistant/button/"HOST"/config";
+const char* mqttTopicConfig4 = "homeassistant/button/"HOST"/test/config";
+const char* mqttTopicConfig5 = "homeassistant/button/"HOST"/restart/config";
+const char* mqttTopicConfig6 = "homeassistant/button/"HOST"/update/config";
 const char* mqttTopicLast = "smartbell/"HOST"/last";
 const char* mqttTopicOTA = "smartbell/"HOST"/ota";
 const char* mqttTopicRinging = "smartbell/"HOST"/ringing";
@@ -173,14 +176,18 @@ void normalSetup() {
   ok = ok && mqttClient.subscribe(mqttTopicOTA);
   ok = ok && mqttClient.subscribe(mqttTopicTest);
   ok = ok && mqttClient.publish(mqttTopicAvailability, "online", true);
-  snprintf(buffer, MAX_MESSAGE_LEN, "{\"atype\": \"trigger\", \"t\": \"%s\", \"type\": \"button_short_press\", \"stype\": \"button_1\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}}", mqttTopicRinging, WiFi.macAddress().c_str(), HOST);
+  snprintf(buffer, MAX_MESSAGE_LEN, "{\"atype\": \"trigger\", \"t\": \"%s\", \"type\": \"button_short_press\", \"stype\": \"button_1\", \"device\": "DEVICE_INFO"}", mqttTopicRinging, WiFi.macAddress().c_str(), HOST);
   ok = ok && mqttClient.publish(mqttTopicConfig1, buffer, true);
-  snprintf(buffer, MAX_MESSAGE_LEN, "{\"stat_t\": \"%s\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}, \"dev_cla\": \"connectivity\", \"entity_category\": \"diagnostic\", \"icon\": \"mdi:doorbell\", \"json_attr_t\": \"%s\", \"name\": \"Smartbell Status\", \"uniq_id\": \"%ss\", \"pl_on\": \"online\", \"pl_off\": \"offline\"}", mqttTopicAvailability, WiFi.macAddress().c_str(), HOST, mqttTopicStatus, HOST);
+  snprintf(buffer, MAX_MESSAGE_LEN, "{\"stat_t\": \"%s\", \"device\": "DEVICE_INFO", \"dev_cla\": \"connectivity\", \"entity_category\": \"diagnostic\", \"icon\": \"mdi:doorbell\", \"json_attr_t\": \"%s\", \"name\": \"Smartbell Status\", \"uniq_id\": \"%ss\", \"pl_on\": \"online\", \"pl_off\": \"offline\"}", mqttTopicAvailability, WiFi.macAddress().c_str(), HOST, mqttTopicStatus, HOST);
   ok = ok && mqttClient.publish(mqttTopicConfig2, buffer, true);
-  snprintf(buffer, MAX_MESSAGE_LEN, "{\"avty_t\": \"%s\", \"stat_t\": \"%s\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}, \"dev_cla\": \"timestamp\", \"entity_category\": \"diagnostic\", \"name\": \"Last doorbell press\", \"uniq_id\": \"%s\", \"val_tpl\": \"{{value|int|timestamp_local}}\"}", mqttTopicAvailability, mqttTopicLast, WiFi.macAddress().c_str(), HOST, HOST);
+  snprintf(buffer, MAX_MESSAGE_LEN, "{\"avty_t\": \"%s\", \"stat_t\": \"%s\", \"device\": "DEVICE_INFO", \"dev_cla\": \"timestamp\", \"entity_category\": \"diagnostic\", \"name\": \"Last doorbell press\", \"uniq_id\": \"%s\", \"val_tpl\": \"{{value|int|timestamp_local}}\"}", mqttTopicAvailability, mqttTopicLast, WiFi.macAddress().c_str(), HOST, HOST);
   ok = ok && mqttClient.publish(mqttTopicConfig3, buffer, true);
-  snprintf(buffer, MAX_MESSAGE_LEN, "{\"avty_t\": \"%s\", \"cmd_t\": \"%s\", \"device\": {\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}, \"icon\": \"mdi:doorbell\", \"name\": \"Test doorbell alerts\", \"opt\": false, \"uniq_id\": \"%st\"}", mqttTopicAvailability, mqttTopicTest, WiFi.macAddress().c_str(), HOST, HOST);
+  snprintf(buffer, MAX_MESSAGE_LEN, "{\"avty_t\": \"%s\", \"cmd_t\": \"%s\", \"device\": "DEVICE_INFO", \"icon\": \"mdi:doorbell\", \"name\": \"Test smartbell alerts\", \"uniq_id\": \"%st\"}", mqttTopicAvailability, mqttTopicTest, WiFi.macAddress().c_str(), HOST, HOST);
   ok = ok && mqttClient.publish(mqttTopicConfig4, buffer, true);
+  snprintf(buffer, MAX_MESSAGE_LEN, "{\"avty_t\": \"%s\", \"cmd_t\": \"%s\", \"device\": "DEVICE_INFO", \"dev_cla\": \"restart\", \"name\": \"Restart smartbell\", \"pl_prs\": 0, \"uniq_id\": \"%sr\"}", mqttTopicAvailability, mqttTopicOTA, WiFi.macAddress().c_str(), HOST, HOST);
+  ok = ok && mqttClient.publish(mqttTopicConfig5, buffer, true);
+  snprintf(buffer, MAX_MESSAGE_LEN, "{\"avty_t\": \"%s\", \"cmd_t\": \"%s\", \"device\": "DEVICE_INFO", \"dev_cla\": \"update\", \"name\": \"Update smartbell\", \"pl_prs\": 1, \"uniq_id\": \"%su\"}", mqttTopicAvailability, mqttTopicOTA, WiFi.macAddress().c_str(), HOST, HOST);
+  ok = ok && mqttClient.publish(mqttTopicConfig6, buffer, true);
   ok = ok && updateStatus();
   if (ok) {
     Serial.println("[OK]");
