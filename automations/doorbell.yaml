@@ -15,7 +15,7 @@
       device_id: ad05c197194f71170e88ecae95b2eae2
       type: button_short_press
       subtype: button_1
-      discovery_id: smartbell1
+      discovery_id: smartbell
   variables:
     message: Someone at the door there is!
   action:
