@@ -22,15 +22,16 @@ energy_automation:
       mode: single
   script:
     kill_if_idle:
+      alias: Kill If Idle
       description:
-        "Turn off a switch if it isn't already off, but its load is at idle."
+        "Turn off a switch if it is on, but its load is at idle."
       fields:
         switch_entity:
           name: Switch entity
           description: Switch to turn off
           selector:
             entity:
-              device_class: outlet
+              domain: switch
         power_entity:
           name: Power measurement entity
           description: Entity to check to determine if switch is under load.
@@ -47,13 +48,11 @@ energy_automation:
               max: 3500
               unit_of_measurement: W
       sequence:
-        - condition: state
-          entity_id: "{{ switch_entity }}"
-          state: "on"
-        - condition: numeric_state
-          entity_id: "{{ power_entity }}"
-          below: "{{ idle_power }}"
+        - condition: template
+          value_template: '{{ states(switch_entity) == "on" }}'
+        - condition: template
+          value_template: '{{ states(power_entity) | int < idle_power }}'
         - service: switch.turn_off
           target:
-            entity_id: "{{ switch_entity }}"
+            entity_id: '{{ switch_entity }}'
 ...
