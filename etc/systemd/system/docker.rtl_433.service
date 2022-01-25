@@ -1,0 +1,13 @@
+[Unit]
+Description=RTL-SDR radio receiver/decoder
+After=network-online.target dev-rtlsdr.device docker.service
+Requires=network-online.target dev-rtlsdr.device docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker stop rtl_433
+ExecStartPre=-/usr/bin/docker rm rtl_433
+ExecStart=/usr/local/bin/setup_rtlsdr radio1
+ExecStop=/usr/bin/docker stop rtl_433
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Detech RTL_SDR device and start RTL_433 Docker container
+# Optional parameter to rename host (default radio1) - affects MQTT output.
+
+RTLSDRDEV=`/usr/local/bin/get_usb_dev RTL2838`
+exec /usr/bin/docker run --name rtl_433 --hostname ${1:-radio1} --network="mqtt-net" --device="${RTLSDRDEV}:${RTLSDRDEV}" jringe/rtl_433
+
