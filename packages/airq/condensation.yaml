@@ -6,7 +6,7 @@ airq_condensation:
   notify:
     - platform: file
       name: condensation_log
-      filename: /home/homeassistant/condensation.csv
+      filename: /config/condensation.csv
       timestamp: true
 
   automation:
