@@ -6,7 +6,7 @@ airq_temp_alerts:
   automation:
     - id: '1643192730'
       alias: Warm conservatory
-      description: Send IFTTT notification if conservatory is warmer than landing
+      description: Notify if conservatory is warmer than landing.
       trigger:
         - platform: numeric_state
           entity_id: sensor.airq_aht2x_temperature

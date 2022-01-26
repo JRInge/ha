@@ -1,3 +1,4 @@
+---
 version: '2'
 services:
   samba:
@@ -30,7 +31,8 @@ services:
     ports:
       - "1883:1883"
     volumes:
-      - /home/pi/homeassistant/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - "/home/pi/homeassistant/mosquitto/mosquitto.conf:\
+        /mosquitto/config/mosquitto.conf"
       - /home/pi/homeassistant/mosquitto/data:/mosquitto/data
       - /home/pi/homeassistant/mosquitto/log:/mosquitto/log
     restart: always
@@ -46,7 +48,7 @@ services:
     image: "ghcr.io/home-assistant/home-assistant:stable"
     volumes:
       - /home/pi/homeassistant/config:/config
-      - /home/pi/homeassistant/scripts:/home/homeassistant/scripts
+      - /home/pi/homeassistant/scripts:/home/homeassistant/scripts:ro
       - /etc/localtime:/etc/localtime:ro
     restart: always
     network_mode: host
@@ -54,3 +56,4 @@ networks:
   default:
     external: true
     name: mqtt-net
+...
