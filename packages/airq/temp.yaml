@@ -22,5 +22,6 @@ airq_temp_alerts:
           data:
             title: "Comfort advice"
             message: "It's warmer in the conservatory than inside now!"
+            url: "http://{{ states('input_text.hostname') }}:8123/lovelace/3"
       mode: single
 ...

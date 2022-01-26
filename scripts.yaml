@@ -71,5 +71,5 @@ doorbell_alert_james:
         message: >-
           Doorbell pressed at
           {{ '{:02}:{:02}'.format(now().hour, now().minute) }}
-        url: 'http://raspberrypi:8123/lovelace/doorbell'
+        url: "http://{{ states('input_text.hostname') }}:8123/lovelace/doorbell"
 ...

@@ -26,6 +26,6 @@ airq_low_q_alerts:
             message: >
               Current PM2.5 level:
               {{ states('sensor.airq_vindriktning_pm2_5') }} µg/m³
-            url: "http://raspberrypi:8123/lovelace/3"
+            url: "http://{{ states('input_text.hostname') }}:8123/lovelace/3"
       mode: single
 ...
