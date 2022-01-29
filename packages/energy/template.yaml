@@ -16,6 +16,7 @@ energy_template:
               | float * 244)
               | round / 1000
             }}
+          state_class: measurement
           unique_id: 34743b
           unit_of_measurement: kW
 ...

@@ -19,6 +19,10 @@ recorder:
       - sensor.hp_envy_photo_7100_series_uptime
       - sensor.current
 
+input_text:
+  hostname:
+    initial: !env_var HOSTNAME
+
 history:
   exclude:
     domains:
@@ -37,7 +41,7 @@ media_player: !include players.yaml
 camera:
   - platform: generic
     name: Living Room TV Screenshot
-    still_image_url: "http://raspberrypi:8123\
+    still_image_url: "http://{{ states('input_text.hostname') }}:8123\
       {{ state_attr('media_player.living_room_tv_2', 'entity_picture') }}"
 
 ifttt:

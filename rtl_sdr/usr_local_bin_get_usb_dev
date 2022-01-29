@@ -1,0 +1,10 @@
+#!/bin/bash
+if [ -z ${1+x} ]; then
+  echo $(basename $0): Print the name of the /dev file associated with a USB device.
+  echo
+  echo Usage: $(basename ${0}) device
+  echo Where 'device' is a unique string from the lsusb description of the device.
+else
+  lsusb | sed -n "/${1}/ s/Bus \\([^ ]\\+\\) Device \\([^:]\\+\\).*/\\/dev\\/bus\\/usb\\/\\1\\/\\2/p"
+fi
+

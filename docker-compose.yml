@@ -1,0 +1,59 @@
+---
+version: '2'
+services:
+  samba:
+    container_name: samba
+    image: dperson/samba
+    command: |-
+        -g "netbios name = ${HOSTNAME}"
+        -g "ntlm auth = true"
+        -g "security = user"
+        -s "homeassistant;/share/homeassistant;yes;no;no"
+        -u "pi;${SAMBAPASSWORD}"
+    environment:
+      - GROUPID=1000
+      - HOSTNAME=${HOSTNAME}
+      - NMBD=true
+      - TZ=Europe/London
+      - USERID=1000
+      - WORKGROUP=WORKGROUP
+    ports:
+      - "137:137/udp"
+      - "138:138/udp"
+      - "139:139"
+      - "445:445"
+    volumes:
+      - /home/pi/homeassistant:/share/homeassistant
+    restart: always
+  mqtt:
+    container_name: mqtt
+    image: eclipse-mosquitto
+    ports:
+      - "1883:1883"
+    volumes:
+      - "/home/pi/homeassistant/mosquitto/mosquitto.conf:\
+        /mosquitto/config/mosquitto.conf"
+      - /home/pi/homeassistant/mosquitto/data:/mosquitto/data
+      - /home/pi/homeassistant/mosquitto/log:/mosquitto/log
+    restart: always
+  wsdd:
+    container_name: wsdd
+    image: kosdk/wsdd
+    environment:
+      - HOST_NAME=${HOSTNAME}
+    network_mode: host
+    restart: always
+  homeassistant:
+    container_name: hassio
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - /home/pi/homeassistant/config:/config
+      - /home/pi/homeassistant/scripts:/home/homeassistant/scripts:ro
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    network_mode: host
+networks:
+  default:
+    external: true
+    name: mqtt-net
+...

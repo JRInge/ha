@@ -1,0 +1,50 @@
+---
+# Gather data to predict morning condensation
+########
+
+airq_condensation:
+  notify:
+    - platform: file
+      name: condensation_log
+      filename: /config/condensation.csv
+      timestamp: true
+
+  automation:
+    - alias: Condensation Log
+      description: Log temperature and humidity data to predict condensation.
+      trigger:
+        - platform: time
+          at:
+            - "20:30:00"
+            - "05:30:00"
+      action:
+        - service: notify.condensation_log
+          data_template:
+            message: >
+              , {{ states('sensor.airq_aht2x_temperature') }},
+              {{ states('sensor.airq_aht2x_humidity') }},
+              {{ state_attr('weather.met_office_stoke_bishop_3_hourly',
+              'temperature') }},
+              {{ state_attr('weather.met_office_stoke_bishop_3_hourly',
+              'humidity') }},
+              {{ state_attr('weather.met_office_stoke_bishop_3_hourly',
+              'forecast')[0].temperature }},
+              {{ state_attr('weather.met_office_stoke_bishop_3_hourly',
+              'forecast')[0].humidity }},
+              {{ state_attr('weather.met_office_stoke_bishop_3_hourly',
+              'forecast')[1].temperature }},
+              {{ state_attr('weather.met_office_stoke_bishop_3_hourly',
+              'forecast')[1].humidity }},
+              {{ state_attr('weather.met_office_stoke_bishop_3_hourly',
+              'forecast')[2].temperature }},
+              {{ state_attr('weather.met_office_stoke_bishop_3_hourly',
+              'forecast')[2].humidity }},
+              {{ state_attr('weather.met_office_stoke_bishop_3_hourly',
+              'forecast')[3].temperature }},
+              {{ state_attr('weather.met_office_stoke_bishop_3_hourly',
+              'forecast')[3].humidity }},
+              {{ state_attr('weather.met_office_stoke_bishop_3_hourly',
+              'forecast')[4].temperature }},
+              {{ state_attr('weather.met_office_stoke_bishop_3_hourly',
+              'forecast')[4].humidity }}
+...

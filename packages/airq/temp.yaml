@@ -1,0 +1,27 @@
+---
+# Automations for temperature
+########
+
+airq_temp_alerts:
+  automation:
+    - id: '1643192730'
+      alias: Warm conservatory
+      description: Notify if conservatory is warmer than landing.
+      trigger:
+        - platform: numeric_state
+          entity_id: sensor.airq_aht2x_temperature
+          below: sensor.airq2_dht11_temperature
+          for:
+            minutes: 10
+      condition:
+        - condition: numeric_state
+          entity_id: sensor.airq2_dht11_temperature
+          below: 20
+      action:
+        - service: script.ifttt_notification
+          data:
+            title: "Comfort advice"
+            message: "It's warmer in the conservatory than inside now!"
+            url: "http://{{ states('input_text.hostname') }}:8123/lovelace/3"
+      mode: single
+...

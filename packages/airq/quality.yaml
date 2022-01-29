@@ -1,0 +1,31 @@
+---
+# Automations for low air quality
+########
+
+# PM2.5 levels from Ikea VINDRIKTNING manual:
+#
+# Green: 0-35
+# Amber: 36-85
+# Red: >85
+
+airq_low_q_alerts:
+  automation:
+    - id: '1611945742856'
+      alias: Air Quality Alert
+      description: Send IFTTT notification if PM2.5 count is too high
+      trigger:
+        - platform: numeric_state
+          entity_id: sensor.airq_vindriktning_pm2_5
+          above: 35
+          for:
+            minutes: 5
+      action:
+        - service: script.ifttt_notification
+          data:
+            title: Air Quality Alert
+            message: >
+              Current PM2.5 level:
+              {{ states('sensor.airq_vindriktning_pm2_5') }} µg/m³
+            url: "http://{{ states('input_text.hostname') }}:8123/lovelace/3"
+      mode: single
+...

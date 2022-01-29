@@ -5,7 +5,7 @@
 energy_sensor:
   sensor:
     - platform: mqtt
-      state_topic: rtl_433/raspberrypi/events
+      state_topic: rtl_433/radio1/34743
       device:
         identifiers: 34743
         manufacturer: Efergy
@@ -17,7 +17,7 @@ energy_sensor:
       unique_id: 34743
       unit_of_measurement: A
       value_template: "{{ value_json.current }}"
-      json_attributes_topic: rtl_433/raspberrypi/events
+      json_attributes_topic: rtl_433/radio1/34743
       json_attributes_template: >
         {{ {
           "battery": value_json.battery_ok,

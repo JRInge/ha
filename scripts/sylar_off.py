@@ -1,4 +1,4 @@
-#!/srv/homeassistant/bin/python3
+#!/usr/local/bin/python3
 
 from argparse import ArgumentParser, Namespace
 from nasapi import NASAPI
