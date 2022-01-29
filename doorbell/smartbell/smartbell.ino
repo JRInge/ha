@@ -29,8 +29,8 @@ const char* passFallback = SECRET_FALLBACK_PASS;
 // try again to connect to your regular network, so it will not stay down too
 // long after a short outage of your infrastructure.
 
-#define MAX_MESSAGE_LEN 512
-#define DEVICE_INFO "{\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Front Door\", \"via_device\": \"MQTT broker\"}"
+#define MAX_MESSAGE_LEN 1024
+#define DEVICE_INFO "{\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Hall\", \"via_device\": \"MQTT broker\"}"
 
 const char* mqttTopicAvailability = "smartbell/"HOST"/status";
 const char* mqttTopicConfig1 = "homeassistant/device_automation/"HOST"/config";
@@ -206,10 +206,12 @@ void normalLoop() {
 }
 
 bool checkRinging() {
+  unsigned long now_t = millis();
+  
   bool nowRinging = (digitalRead(pinRinging) == HIGH); //Pulled high by optocoupler if ringing
 
-  if (nowRinging && !isRinging && millis() - ringDebounce > 3000) {
-    ringDebounce = millis();
+  if (nowRinging && !isRinging && ((now_t - ringDebounce) > 3000)) {
+    ringDebounce = now_t;
     handleRing("Doorbell");
   }
   isRinging = nowRinging;
