@@ -1,0 +1,21 @@
+---
+# UK Threat Level updates
+#######
+
+threat_alerts:
+  feedreader:
+    urls:
+      - https://www.mi5.gov.uk/UKThreatLevel/UKThreatLevel.xml
+  automation:
+    - id: '1645612085'
+      alias: "Send notification of threat level changes"
+      trigger:
+        platform: event
+        event_type: feedreader
+      action:
+        - service: script.ifttt_notification
+          data:
+            title: "{{ trigger.event.data.title }}"
+            message: "{{ trigger.event.data.description }}"
+            url: "{{ trigger.event.data.link }}"
+...
