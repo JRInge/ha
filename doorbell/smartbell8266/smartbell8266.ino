@@ -1,8 +1,8 @@
 #include <ArduinoOTA.h>
-#include <ESPmDNS.h>
+#include <ESP8266mDNS.h>
 #include <NTPClient.h>
 #include <PubSubClient.h>
-#include <WiFi.h>
+#include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 
 #include "smartbell_secrets.h"
@@ -30,6 +30,8 @@ const char* passFallback = SECRET_FALLBACK_PASS;
 // long after a short outage of your infrastructure.
 
 #define MAX_MESSAGE_LEN 1024
+#define MAX_ADDR_LEN 25
+#define MAX_STATUS_LEN 80
 #define DEVICE_INFO "{\"cns\": [[\"mac\", \"%s\"]], \"ids\": \"%s\", \"mf\": \"James Inge\", \"mdl\": \"Smart doorbell interface\", \"name\": \"Smartbell\", \"sa\": \"Hall\", \"via_device\": \"MQTT broker\"}"
 
 const char* mqttTopicAvailability = "smartbell/"HOST"/status";
@@ -45,13 +47,13 @@ const char* mqttTopicRinging = "smartbell/"HOST"/ringing";
 const char* mqttTopicStatus = "smartbell/"HOST"/info";
 const char* mqttTopicTest = "smartbell/"HOST"/test";
 
-const byte    pinRinging = 18;
+const byte    pinRinging = D5;
 IPAddress     myip;
 IPAddress     mqttServer;
 int           mqttPort;
 boolean       otaEnabled;
 boolean       isRinging;
-unsigned long lastTime = 0;
+unsigned long lastRingTime = 0;
 unsigned long ringDebounce;
 
 WiFiClient    wifiClient;
@@ -66,7 +68,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Starting...");
 
-  pinMode(pinRinging, INPUT_PULLDOWN);
+  pinMode(pinRinging, INPUT);
 
   WiFi.hostname(hostname);
   ArduinoOTA.setHostname(hostname);
@@ -78,7 +80,7 @@ void loop() {
   //Normal state: Connect to Wifi infrastructure and MQTT broker
   int wifiStatus = WiFi.begin(ssid, pass);
   int retries = 0;
-  char mqtt[25];
+  char mqtt[MAX_ADDR_LEN];
   unsigned long timeout;
 
   while (retries < 3) {
@@ -107,7 +109,7 @@ void loop() {
         } else {
           mqttServer = MDNS.IP(0);
           mqttPort = MDNS.port(0);
-          sprintf(mqtt, "[%d.%d.%d.%d:%d]", mqttServer[0], mqttServer[1], mqttServer[2], mqttServer[3], mqttPort);
+          snprintf(mqtt, MAX_ADDR_LEN, "[%d.%d.%d.%d:%d]", mqttServer[0], mqttServer[1], mqttServer[2], mqttServer[3], mqttPort);
           mqttClient.setServer(mqttServer, mqttPort);
           Serial.println(mqtt);
         }
@@ -205,7 +207,7 @@ void normalLoop() {
   }
 }
 
-bool checkRinging() {
+void checkRinging() {
   unsigned long now_t = millis();
   
   bool nowRinging = (digitalRead(pinRinging) == HIGH); //Pulled high by optocoupler if ringing
@@ -218,13 +220,13 @@ bool checkRinging() {
 }
 
 void handleRing(char *ringType) {
-  char status[80];
+  char status[MAX_STATUS_LEN];
 
-  lastTime = timeClient.getEpochTime();
+  lastRingTime = timeClient.getEpochTime();
   Serial.println("Palim, palim!");
-  sprintf(status, "%d", lastTime);
+  snprintf(status, MAX_STATUS_LEN, "%d", lastRingTime);
   mqttClient.publish(mqttTopicLast, status, true);
-  sprintf(status, "{\"time\": %lu, \"type\": \"%s\"}", lastTime, ringType);
+  snprintf(status, MAX_STATUS_LEN, "{\"time\": %lu, \"type\": \"%s\"}", lastRingTime, ringType);
   mqttClient.publish(mqttTopicRinging, status);
 }
 
@@ -250,8 +252,8 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
 }
 
 bool updateStatus() {
-    char status[128];
+    char status[MAX_MESSAGE_LEN];
 
-    sprintf(status, "{\"name\": \"%s\", \"ip\": \"%d.%d.%d.%d\", \"broker\": \"%d.%d.%d.%d:%d\", \"ota\": %d}", hostname, myip[0], myip[1], myip[2], myip[3], mqttServer[0], mqttServer[1], mqttServer[2], mqttServer[3], mqttPort, otaEnabled);
+    snprintf(status, MAX_MESSAGE_LEN, "{\"name\": \"%s\", \"ip\": \"%d.%d.%d.%d\", \"broker\": \"%d.%d.%d.%d:%d\", \"ota\": %d}", hostname, myip[0], myip[1], myip[2], myip[3], mqttServer[0], mqttServer[1], mqttServer[2], mqttServer[3], mqttPort, otaEnabled);
     return mqttClient.publish(mqttTopicStatus, status, true);
 }
