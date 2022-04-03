@@ -14,7 +14,7 @@ covid_sensor:
       scan_interval: 21600
       json_attributes:
         - date
-      value_template: "{{ value_json.rate }}"
+      value_template: "{{ float(value_json.rate | replace(',', '')) }}"
 
 #
 # Alert levels are not currently being published
