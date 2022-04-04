@@ -21,7 +21,9 @@ airq_temp_alerts:
         - service: script.ifttt_notification
           data:
             title: "Comfort advice"
-            message: "It's warmer in the conservatory than inside now!"
+            message: >-
+              At {{ '{:02}:{:02}'.format(now().hour, now().minute) }}
+              the conservatory's warmer than inside now!
             url: "http://{{ states('input_text.hostname') }}:8123/lovelace/3"
       mode: single
 ...
