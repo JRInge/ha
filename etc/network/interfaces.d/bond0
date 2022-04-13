@@ -1,0 +1,17 @@
+# Bond Configuration
+auto bond0
+
+# Static Or DHCP Via DHCPCD Service Configuration...
+iface bond0 inet dhcp
+
+	# Ensure Bond And WiFi Interface Assignment...
+	pre-up wpa_supplicant -B -b bond0 -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf
+
+	# Ensure Interface Assignments...
+	bond-primary eth0
+	bond-slaves eth0 wlan0
+	bond-mode active-backup
+	bond-miimon 100
+	bond-downdelay 0
+	bond-updelay 800
+	bond-primary_reselect always
