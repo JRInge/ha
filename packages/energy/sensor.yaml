@@ -3,25 +3,25 @@
 ########
 
 energy_sensor:
-  sensor:
-    - platform: mqtt
-      state_topic: rtl_433/radio1/34743
-      device:
-        identifiers: 34743
-        manufacturer: Efergy
-        model: Efergy-e2CT
-        via_device: RTL-433
-      device_class: Current
-      expire_after: 13
-      name: Current
-      unique_id: 34743
-      unit_of_measurement: A
-      value_template: "{{ value_json.current }}"
-      json_attributes_topic: rtl_433/radio1/34743
-      json_attributes_template: >
-        {{ {
-          "battery": value_json.battery_ok,
-          "time": value_json.time,
-          "interval": value_json.interval
-        } | to_json }}
+  mqtt:
+    sensor:
+      - name: Current
+        state_topic: rtl_433/radio1/34743
+        device:
+          identifiers: 34743
+          manufacturer: Efergy
+          model: Efergy-e2CT
+          via_device: RTL-433
+        device_class: Current
+        expire_after: 13
+        unique_id: 34743
+        unit_of_measurement: A
+        value_template: "{{ value_json.current }}"
+        json_attributes_topic: rtl_433/radio1/34743
+        json_attributes_template: >
+          {{ {
+            "battery": value_json.battery_ok,
+            "time": value_json.time,
+            "interval": value_json.interval
+          } | to_json }}
 ...

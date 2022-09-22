@@ -2,15 +2,19 @@
 # COVID-19 info images
 ########
 
+# Generic Camera configuration via YAML is deprecated. However, this file still
+# sets the 'msoa' input used in the template for the camera URL, which is now
+# configured via the GUI.
+
 covid_camera:
   input_text:
     msoa:
       initial: !secret msoa
-  camera:
-    - platform: generic
-      name: Local COVID level
-      still_image_url: "https://coronavirus.data.gov.uk/\
-        public/assets/frontpage/scales/\
-        {{ state_attr( 'sensor.covid_rate', 'date')[:10] }}\
-        /msoa/{{ states('input_text.msoa') }}.jpg"
+#  camera:
+#    - platform: generic
+#      name: Local COVID level
+#      still_image_url: "https://coronavirus.data.gov.uk/\
+#        public/assets/frontpage/scales/\
+#        {{ state_attr( 'sensor.covid_rate', 'date')[:10] }}\
+#        /msoa/{{ states('input_text.msoa') }}.jpg"
 ...

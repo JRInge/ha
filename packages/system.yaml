@@ -5,7 +5,6 @@
 system_sensors:
   sensor:
     - platform: uptime
-    - platform: version
       source: local
     - platform: command_line
       name: CPU Temperature
