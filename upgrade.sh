@@ -1,6 +1,7 @@
 #!/bin/bash
 if [[ -n "$SAMBAPASSWORD" ]]; then
-  HOSTNAME="$(hostname)" docker-compose up -d
+  docker pull ghcr.io/home-assistant/home-assistant:stable
+  ./start.sh
 else
   echo "Set \$SAMBAPASSWORD before attempting upgrade."
 fi
