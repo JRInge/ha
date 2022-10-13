@@ -4,8 +4,6 @@
 
 system_sensors:
   sensor:
-    - platform: uptime
-      source: local
     - platform: command_line
       name: CPU Temperature
       command: "cat /sys/class/thermal/thermal_zone0/temp"
@@ -18,20 +16,17 @@ system_sensors:
       alias: "Update Available Notification"
       trigger:
         - platform: state
-          entity_id: binary_sensor.updater
+          entity_id: binary_sensor.docker_hub_update_available
           from: "off"
           to: "on"
       action:
         - service: persistent_notification.create
           data:
             message: >
-              **Home Assistant
-              {{ state_attr('binary_sensor.updater', 'newest_version') }}
-              is available.**
-
+              **Home Assistant {{ states('sensor.docker_hub') }} is available.**
 
               See [Release Notes](
-              {{ state_attr('binary_sensor.updater', 'release_notes') }}
-              ) and [Update Instructions](
-              https://www.home-assistant.io/common-tasks/core/).
+              https://www.home-assistant.io/latest-release-notes/) and
+              [Update Instructions](
+              https://www.home-assistant.io/common-tasks/container/).
 ...
