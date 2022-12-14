@@ -19,6 +19,9 @@ covid_automation:
         - condition: time
           after: 06:00:00
           before: '23:00:00'
+        - condition: numeric_state
+          entity_id: sensor.covid_rate
+          above: 0
       action:
         - service: script.ifttt_notification
           data:
