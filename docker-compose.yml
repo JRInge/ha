@@ -62,6 +62,7 @@ services:
       - /home/pi/homeassistant/config:/config
       - /home/pi/homeassistant/scripts:/home/homeassistant/scripts:ro
       - /etc/localtime:/etc/localtime:ro
+      - /media/pi/MEDIA:/media
       - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
     restart: always
     network_mode: host
