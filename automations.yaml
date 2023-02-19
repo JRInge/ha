@@ -1,0 +1,109 @@
+---
+- id: '1673106831357'
+  alias: Living Room TV Power Saver
+  description: Turn off TV if inactive after 23:00.
+  trigger:
+  - platform: time_pattern
+    hours: '23'
+    minutes: /5
+    seconds: '0'
+  - platform: time_pattern
+    hours: '0'
+    minutes: /5
+    seconds: '0'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.living_room_activity_state
+    state: 'off'
+  - condition: state
+    state: 'on'
+    entity_id: switch.living_room
+  action:
+  - type: turn_off
+    device_id: bacf57e5a27745b1c2233bc3245d5cc1
+    entity_id: switch.living_room
+    domain: switch
+  mode: single
+- id: '1622581753673'
+  alias: Idle Radio
+  description: Turn off kitchen radio when it has been idle for 10 minutes
+  trigger:
+  - platform: state
+    entity_id: media_player.kitchen_radio
+    to: idle
+    for: 00:10:00
+  condition: []
+  action:
+  - service: media_player.turn_off
+    target:
+      entity_id: media_player.kitchen_radio
+  mode: single
+- id: '1622532153673'
+  alias: Idle Living Room TV
+  description: Turn off lounge TV when it has been idle for 5 minutes
+  trigger:
+  - platform: state
+    entity_id: media_player.living_room_tv_2
+    to: standby
+    for: 00:05:00
+  condition: []
+  action:
+  - service: media_player.turn_off
+    target:
+      entity_id: media_player.living_room_tv_2
+  mode: single
+- id: '1622532153674'
+  alias: Kitchen TV power saver
+  description: Kill power to Kitchen TV overnight
+  trigger:
+  - platform: time_pattern
+    hours: '22'
+    minutes: /5
+    seconds: '0'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.kitchen_tv_activity_state
+    state: 'off'
+  - condition: state
+    entity_id: switch.kitchen_tv
+    state: 'on'
+  action:
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.kitchen_tv
+  mode: single
+- id: '1622532153675'
+  alias: Kitchen TV power on
+  description: Return power to Kitchen TV in the morning
+  trigger:
+  - platform: time
+    at:
+    - 06:30:00
+  condition:
+  - condition: state
+    entity_id: switch.kitchen_tv
+    state: 'off'
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id: switch.kitchen_tv
+    data: {}
+  mode: single
+- id: '1673134399441'
+  alias: Living room TV power on
+  description: Return power to living room TV in the morning
+  trigger:
+  - platform: time
+    at: 06:30:00
+  condition:
+  - condition: state
+    entity_id: switch.living_room
+    state: 'off'
+  action:
+  - service: switch.turn_on
+    data: {}
+    target:
+      entity_id: switch.living_room
+  mode: single
+...
