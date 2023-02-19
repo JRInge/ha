@@ -18,20 +18,4 @@ weather_alerts:
             title: "{{ trigger.event.data.title }}"
             message: "{{ trigger.event.data.description }}"
             url: "{{ trigger.event.data.link }}"
-    - id: '1641924903'
-      alias: "Frost alerts"
-      trigger:
-        platform: numeric_state
-        entity_id: sensor.stoke_bishop_temperature_daily
-        below: 1
-      action:
-        - service: script.ifttt_notification
-          data:
-            title: "Frost alert"
-            message: >
-              Low temperature of {{
-              states('sensor.stoke_bishop_temperature_daily') +
-              state_attr('sensor.stoke_bishop_temperature_daily',
-              'unit_of_measurement') }} predicted.
-            url: https://www.metoffice.gov.uk/weather/forecast/gcnhu5dcz
 ...

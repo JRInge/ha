@@ -230,4 +230,65 @@
     target:
       entity_id: automation.fairy_lights_off_if_bright
   mode: single
+- id: '1611945742856'
+  # PM2.5 levels from Ikea VINDRIKTNING manual:
+  #
+  # Green: 0-35
+  # Amber: 36-85
+  # Red: >85  alias: Air Quality Alert
+  description: Send IFTTT notification if PM2.5 count is too high
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.landing_pm2_5
+    above: 40
+    for:
+      minutes: 5
+  action:
+  - service: script.ifttt_notification
+    data:
+      title: Air Quality Alert
+      message: 'PM2.5 level at {{ ''{:02}:{:02}''.format(now().hour, now().minute)
+        }}: {{ states(''sensor.landing_pm2_5'') }} µg/m³'
+      url: http://{{ states('input_text.hostname') }}:8123/lovelace/3
+  mode: single
+- id: '1673171955502'
+  alias: Warm conservatory
+  description: Notify if conservatory is warmer than landing.
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.landing_temperature
+    below: sensor.conservatory_temperature
+    for:
+      minutes: 10
+  condition:
+  - condition: numeric_state
+    entity_id: sensor.conservatory_temperature
+    below: 20
+  action:
+  - service: script.ifttt_notification
+    data:
+      title: Comfort advice
+      message: At {{ '{:02}:{:02}'.format(now().hour, now().minute) }} the conservatory's
+        warmer than inside now!
+      url: http://{{ states('input_text.hostname') }}:8123/lovelace/3
+  mode: single
+- id: '1673172557644'
+  alias: Frost alerts
+  description: Sends alert when predicted temperature is lower than 1°C.
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.stoke_bishop_temperature_daily
+    below: 1
+  condition: []
+  action:
+  - service: script.ifttt_notification
+    data:
+      title: Frost alert
+      message: 'Low temperature of {{ states(''sensor.stoke_bishop_temperature_daily'')
+        + state_attr(''sensor.stoke_bishop_temperature_daily'', ''unit_of_measurement'')
+        }} predicted.
+
+        '
+      url: https://www.metoffice.gov.uk/weather/forecast/gcnhu5dcz
+  mode: single
 ...
