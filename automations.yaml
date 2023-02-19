@@ -125,4 +125,109 @@
     data:
       message: '{{ message }}'
   mode: single
+- id: '1673215979945'
+  alias: Fairy Lights on am
+  description: Turn fairy lights on in morning
+  trigger:
+  - platform: time
+    at: 06:25:00
+  condition:
+  - condition: sun
+    before: sunrise
+  action:
+  - type: turn_on
+    device_id: fa245fa880976f311ef4240201b21827
+    entity_id: switch.fairy_lights
+    domain: switch
+  mode: single
+- id: '1673216508549'
+  alias: 'Fairy Lights off '
+  description: Turn off fairy lights if it gets light or it's 08:40.
+  trigger:
+  - platform: time
+    at:
+    - 08:40:00
+    - '23:00:00'
+    - 00:00:00
+  - platform: sun
+    event: sunrise
+    offset: 00:15:00
+  condition: []
+  action:
+  - type: turn_off
+    device_id: fa245fa880976f311ef4240201b21827
+    entity_id: switch.fairy_lights
+    domain: switch
+  mode: single
+- id: '1673247672412'
+  alias: 'Fairy Lights on pm '
+  description: Turn lights on 15 minutes before sunset.
+  trigger:
+  - platform: sun
+    event: sunset
+    offset: -00:15:00
+  condition: []
+  action:
+  - service: automation.turn_off
+    data: {}
+    target:
+      entity_id: automation.fairy_lights_off_if_bright
+  - type: turn_on
+    device_id: fa245fa880976f311ef4240201b21827
+    entity_id: switch.fairy_lights
+    domain: switch
+  mode: single
+- id: '1664517533990'
+  alias: Fairy Lights Low light
+  description: Turns on fairy lights if it gets dark during daytime
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.conservatory_illuminance
+    below: 1024
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  condition:
+  - condition: sun
+    after: sunrise
+    before: sunset
+  - condition: state
+    entity_id: switch.fairy_lights
+    state: 'off'
+  action:
+  - type: turn_on
+    device_id: fa245fa880976f311ef4240201b21827
+    entity_id: switch.fairy_lights
+    domain: switch
+  - service: automation.turn_on
+    data: {}
+    target:
+      entity_id: automation.fairy_lights_off_if_bright
+  mode: single
+- id: '1673248089894'
+  alias: Fairy Lights off if bright
+  description: Once fairy lights have been triggered by low light, turn off again
+    if it gets bright outside.
+  trigger:
+  - platform: time_pattern
+    minutes: /5
+  condition:
+  - condition: state
+    entity_id: sensor.conservatory_illuminance
+    state: '1024'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  action:
+  - type: turn_off
+    device_id: fa245fa880976f311ef4240201b21827
+    entity_id: switch.fairy_lights
+    domain: switch
+  - service: automation.turn_off
+    data: {}
+    target:
+      entity_id: automation.fairy_lights_off_if_bright
+  mode: single
 ...
