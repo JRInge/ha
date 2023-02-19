@@ -1,5 +1,7 @@
+#        -g "multicast dns register = no"
+#        -g "mdns name = mdns"
 ---
-version: '2'
+version: '2.3'
 services:
   samba:
     container_name: samba
@@ -13,10 +15,12 @@ services:
     environment:
       - GROUPID=1000
       - HOSTNAME=${HOSTNAME}
-      - NMBD=true
+#      - NMBD=true
       - TZ=Europe/London
       - USERID=1000
       - WORKGROUP=WORKGROUP
+    healthcheck:
+      disable: true
     ports:
       - "137:137/udp"
       - "138:138/udp"
@@ -28,6 +32,10 @@ services:
   mqtt:
     container_name: mqtt
     image: eclipse-mosquitto
+    profiles:
+      - mqtt
+    healthcheck:
+      disable: true
     ports:
       - "1883:1883"
     volumes:
@@ -41,16 +49,36 @@ services:
     image: kosdk/wsdd
     environment:
       - HOST_NAME=${HOSTNAME}
+    healthcheck:
+      disable: true
     network_mode: host
     restart: always
   homeassistant:
     container_name: hassio
     image: "ghcr.io/home-assistant/home-assistant:stable"
+    healthcheck:
+      disable: true
     volumes:
       - /home/pi/homeassistant/config:/config
       - /home/pi/homeassistant/scripts:/home/homeassistant/scripts:ro
       - /etc/localtime:/etc/localtime:ro
+      - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
     restart: always
+    network_mode: host
+  esphome:
+    profiles:
+      - dev
+    container_name: esphome
+    image: jringe/esphome
+    volumes:
+      - /home/pi/homeassistant/esphome:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/ttyUSB1:/dev/ttyUSB1
+    restart: always
+    privileged: true
     network_mode: host
 networks:
   default:
