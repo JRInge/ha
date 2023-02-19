@@ -1,14 +1,19 @@
 ---
-# UK Threat Level updates
+# RSS Feeds
 #######
 
-threat_alerts:
+# Provides alerts on updates to:
+#  - Met Office severe weather warnings for the south-west UK.
+#  - MI5 terrorist threat levels
+
+rss_feeds:
   feedreader:
     urls:
+      - https://www.metoffice.gov.uk/public/data/PWSCache/WarningsRSS/Region/sw
       - https://www.mi5.gov.uk/UKThreatLevel/UKThreatLevel.xml
   automation:
-    - id: '1645612085'
-      alias: "Send notification of threat level changes"
+    - id: '1623179067263'
+      alias: "RSS feed updates"
       trigger:
         platform: event
         event_type: feedreader
