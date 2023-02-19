@@ -1,4 +1,3 @@
----
 ifttt_notification:
   alias: IFTTT Notification
   fields:
@@ -13,63 +12,57 @@ ifttt_notification:
       selector:
         text:
   sequence:
-    - service: ifttt.trigger
-      data:
-        event: ha_alert
-        value1: >-
-          {% if title is defined %}
-            {{ title }}
-          {% else %}
-            HomeAssistant
-          {% endif %}
-        value2: '{% if message is defined %}{{ message }}{% endif %}'
-        value3: '{% if url is defined %}{{ url }}{% endif %}'
+  - service: ifttt.trigger
+    data:
+      event: ha_alert
+      value1: "{% if title is defined %}\n  {{ title }}\n{% else %}\n  HomeAssistant\n{%
+        endif %}"
+      value2: '{% if message is defined %}{{ message }}{% endif %}'
+      value3: '{% if url is defined %}{{ url }}{% endif %}'
   mode: parallel
   icon: mdi:cellphone-message
   max: 10
 alexa_notification:
   alias: Alexa Notification
   sequence:
-    - service: rest_command.voicemonkey
-      data:
-        monkey: echo-dot-monkey
-        message: '{{ message }}'
-        url: '{{ url }}'
-        image: '{{ image }}'
-        video: '{{ video }}'
+  - service: rest_command.voicemonkey
+    data:
+      monkey: echo-dot-monkey
+      message: '{{ message }}'
+      url: '{{ url }}'
+      image: '{{ image }}'
+      video: '{{ video }}'
   mode: parallel
   icon: mdi:hockey-puck
 doorbell_alert_alexa:
   alias: Alexa doorbell alerts
   sequence:
-    - condition: state
-      entity_id: input_boolean.doorbell_alert_alexa
-      state: "on"
-    - service: rest_command.voice_monkey
-      data:
-        monkey: doorbell-monkey-alexa
-        message: "{{ message }}"
+  - condition: state
+    entity_id: input_boolean.doorbell_alert_alexa
+    state: 'on'
+  - service: rest_command.voice_monkey
+    data:
+      monkey: doorbell-monkey-alexa
+      message: '{{ message }}'
 doorbell_alert_helen:
   alias: Helen's doorbell alerts
   sequence:
-    - condition: state
-      entity_id: input_boolean.doorbell_alert_helen
-      state: "on"
+  - condition: state
+    entity_id: input_boolean.doorbell_alert_helen
+    state: 'on'
 doorbell_alert_james:
   alias: James's doorbell alerts
   sequence:
-    - condition: state
-      entity_id: input_boolean.doorbell_alert_james
-      state: "on"
-    - service: rest_command.voice_monkey
-      data:
-        monkey: doorbell-monkey-james
-        message: "{{ message }}"
-    - service: script.ifttt_notification
-      data:
-        title: HomeAssistant Alert
-        message: >-
-          Doorbell pressed at
-          {{ '{:02}:{:02}'.format(now().hour, now().minute) }}
-        url: "http://{{ states('input_text.hostname') }}:8123/lovelace/doorbell"
-...
+  - condition: state
+    entity_id: input_boolean.doorbell_alert_james
+    state: 'on'
+  - service: rest_command.voice_monkey
+    data:
+      monkey: doorbell-monkey-james
+      message: '{{ message }}'
+  - service: script.ifttt_notification
+    data:
+      title: HomeAssistant Alert
+      message: Doorbell pressed at {{ '{:02}:{:02}'.format(now().hour, now().minute)
+        }}
+      url: http://{{ states('input_text.hostname') }}:8123/lovelace/doorbell
