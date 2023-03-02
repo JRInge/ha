@@ -10,15 +10,19 @@ co2_sensors:
   sensor:
     - platform: rest
       name: "Carbon Tracer CO2 intensity"
-      resource: https://carbontracer.westernpower.co.uk/carbonapi/get_carbon_intensity_now/128239
+      unique_id: 1677706463
+      resource: "https://carbontracer.nationalgrid.co.uk/carbonapi/\
+        get_carbon_intensity_now/128239"
       scan_interval: 180
       icon: mdi:molecule-co2
       state_class: measurement
       unit_of_measurement: gCO2eq/kWh
-      value_template: "{{ value_json.data }}"
+      value_template: "{{ (value_json.data | default('unknown', true)) }}"
     - platform: rest
       name: "Carbon Tracer Grid energy mix"
-      resource: https://carbontracer.westernpower.co.uk/carbonapi/get_energy_mix_now/128239
+      unique_id: 1677706464
+      resource: "https://carbontracer.nationalgrid.co.uk/carbonapi/\
+        get_energy_mix_now/128239"
       scan_interval: 180
       value_template: "OK"
       json_attributes_path: "$.data"
@@ -36,25 +40,37 @@ co2_sensors:
         - "Hydro"
     - platform: rest
       name: "Bristol energy demand"
-      resource: https://carbontracer.nationalgrid.co.uk/carbonapi/get_demand_now/128239
-      value_template: "{{ value_json.data }}"
+      unique_id: 1677706465
+      resource: "https://carbontracer.nationalgrid.co.uk/carbonapi/\
+        get_demand_now/128239"
+      value_template: |-
+        {%- set val = (value_json | default('unknown', true) -%}
+        {{- val if (val == 'unknown') else (val.data * 1000) -}}
       state_class: measurement
       device_class: power
-      unit_of_measurement: MW
+      unit_of_measurement: kW
+      scan_interval: 180
   template:
     sensor:
     - name: "Carbon Tracer Grid fossil fuel percentage"
+      unique_id: 1677706466
       icon: mdi:molecule-co2
       state_class: measurement
       unit_of_measurement: '%'
       state: |-
-        {% set ns = namespace(sum=0) -%}
-        {%- for key, val in states.sensor.carbon_tracer_grid_energy_mix.attributes.items() -%}
-        {%- set ns.sum = ns.sum + float(val, 0) -%}
-        {%- endfor -%}
-        {{ (100 * (
-          state_attr('sensor.carbon_tracer_grid_energy_mix', 'Coal')
+        {% if states.sensor.carbon_tracer_grid_energy_mix %}
+          {% set ns = namespace(sum=0) -%}
+          {%- for key, val in
+            states.sensor.carbon_tracer_grid_energy_mix.attributes.items() -%}
+            {%- set ns.sum = ns.sum + float(val, 0) -%}
+          {%- endfor -%}
+          {{ (100 * (state_attr('sensor.carbon_tracer_grid_energy_mix', 'Coal')
             | default(0, true)
-          + state_attr('sensor.carbon_tracer_grid_energy_mix', 'European Interconnect')
-            | default(0, true) + state_attr('sensor.carbon_tracer_grid_energy_mix', 'Gas Turbine') | default(0, true)) / ns.sum)  | round(2) }}
+            + state_attr('sensor.carbon_tracer_grid_energy_mix',
+            'European Interconnect') | default(0, true)
+            + state_attr('sensor.carbon_tracer_grid_energy_mix', 'Gas Turbine')
+            | default(0, true)) / ns.sum)  | round(2) }}
+        {% else %}
+          unknown
+        {% endif %}
 ...
