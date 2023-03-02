@@ -44,7 +44,7 @@ co2_sensors:
       resource: "https://carbontracer.nationalgrid.co.uk/carbonapi/\
         get_demand_now/128239"
       value_template: |-
-        {%- set val = (value_json | default('unknown', true) -%}
+        {%- set val = (value_json | default('unknown', true)) -%}
         {{- val if (val == 'unknown') else (val.data * 1000) -}}
       state_class: measurement
       device_class: power
