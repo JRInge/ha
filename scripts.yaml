@@ -4,171 +4,175 @@ ifttt_notification:
   fields:
     title:
       selector:
-        text:
+        text: null
       default: HomeAssistant
     message:
       selector:
-        text:
+        text: null
     url:
       selector:
-        text:
+        text: null
   sequence:
-  - service: ifttt.trigger
-    data:
-      event: ha_alert
-      value1: "{% if title is defined %}\n  {{ title }}\n{% else %}\n  HomeAssistant\n{%
-        endif %}"
-      value2: '{% if message is defined %}{{ message }}{% endif %}'
-      value3: '{% if url is defined %}{{ url }}{% endif %}'
+    - service: ifttt.trigger
+      data:
+        event: ha_alert
+        value1: |-
+          {% if title is defined %}
+            {{ title }}
+          {% else %}
+            HomeAssistant
+          {% endif %}
+        value2: "{% if message is defined %}{{ message }}{% endif %}"
+        value3: "{% if url is defined %}{{ url }}{% endif %}"
   mode: parallel
   icon: mdi:cellphone-message
   max: 10
 alexa_notification:
   alias: Alexa Notification
   sequence:
-  - service: rest_command.voicemonkey
-    data:
-      monkey: echo-dot-monkey
-      message: '{{ message }}'
-      url: '{{ url }}'
-      image: '{{ image }}'
-      video: '{{ video }}'
+    - service: rest_command.voicemonkey
+      data:
+        monkey: echo-dot-monkey
+        message: "{{ message }}"
+        url: "{{ url }}"
+        image: "{{ image }}"
+        video: "{{ video }}"
   mode: parallel
   icon: mdi:hockey-puck
 doorbell_alert_alexa:
   alias: Alexa doorbell alerts
   sequence:
-  - condition: state
-    entity_id: input_boolean.doorbell_alert_alexa
-    state: 'on'
-  - service: rest_command.voice_monkey
-    data:
-      monkey: doorbell-monkey-alexa
-      message: '{{ message }}'
+    - condition: state
+      entity_id: input_boolean.doorbell_alert_alexa
+      state: "on"
+    - service: rest_command.voice_monkey
+      data:
+        monkey: doorbell-monkey-alexa
+        message: "{{ message }}"
 doorbell_alert_helen:
   alias: Helen's doorbell alerts
   sequence:
-  - condition: state
-    entity_id: input_boolean.doorbell_alert_helen
-    state: 'on'
+    - condition: state
+      entity_id: input_boolean.doorbell_alert_helen
+      state: "on"
 doorbell_alert_james:
   alias: James's doorbell alerts
   sequence:
-  - condition: state
-    entity_id: input_boolean.doorbell_alert_james
-    state: 'on'
-  - service: rest_command.voice_monkey
-    data:
-      monkey: doorbell-monkey-james
-      message: '{{ message }}'
-  - service: script.ifttt_notification
-    data:
-      title: HomeAssistant Alert
-      message: Doorbell pressed at {{ '{:02}:{:02}'.format(now().hour, now().minute)
-        }}
-      url: http://{{ states('input_text.hostname') }}:8123/lovelace/doorbell
+    - condition: state
+      entity_id: input_boolean.doorbell_alert_james
+      state: "on"
+    - service: rest_command.voice_monkey
+      data:
+        monkey: doorbell-monkey-james
+        message: "{{ message }}"
+    - service: script.ifttt_notification
+      data:
+        title: HomeAssistant Alert
+        message: Doorbell pressed at
+          {{ '{:02}:{:02}'.format(now().hour, now().minute) }}
+        url: http://{{ states('input_text.hostname') }}:8123/lovelace/doorbell
 washing_machine_time_delay:
   alias: Washing Machine Time Delay
   sequence:
-  - if:
-    - condition: state
-      entity_id: switch.washing_machine
-      state: 'off'
-    then:
+    - if:
+        - condition: state
+          entity_id: switch.washing_machine
+          state: "off"
+      then:
+        - service: switch.turn_on
+          data: {}
+          target:
+            entity_id: switch.washing_machine
+    - service: input_text.set_value
+      data:
+        value: Waiting for start button to be pressed on washing machine.
+      target:
+        entity_id: input_text.washing_machine_status
+    - wait_for_trigger:
+        - platform: state
+          entity_id:
+            - binary_sensor.washing_machine_activity_state
+          to: "on"
+          for:
+            hours: 0
+            minutes: 0
+            seconds: 8
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id: switch.washing_machine
+    - service: input_text.set_value
+      data:
+        value: Waiting until {{ states('input_datetime.washing_start_time') }}
+          to start wash cycle.
+      target:
+        entity_id: input_text.washing_machine_status
+    - wait_for_trigger:
+        - platform: time
+          at: input_datetime.washing_start_time
     - service: switch.turn_on
       data: {}
       target:
         entity_id: switch.washing_machine
-  - service: input_text.set_value
-    data:
-      value: Waiting for start button to be pressed on washing machine.
-    target:
-      entity_id: input_text.washing_machine_status
-  - wait_for_trigger:
-    - platform: state
-      entity_id:
-      - binary_sensor.washing_machine_activity_state
-      to: 'on'
-      for:
-        hours: 0
-        minutes: 0
-        seconds: 10
-  - service: switch.turn_off
-    data: {}
-    target:
-      entity_id: switch.washing_machine
-  - service: input_text.set_value
-    data:
-      value: Waiting until {{ states('input_datetime.washing_start_time') }} to start
-        wash cycle.
-    target:
-      entity_id: input_text.washing_machine_status
-  - wait_for_trigger:
-    - platform: time
-      at: input_datetime.washing_start_time
-  - service: switch.turn_on
-    data: {}
-    target:
-      entity_id: switch.washing_machine
-  - service: input_text.set_value
-    data:
-      value: Wash cycle in progress.
-    target:
-      entity_id: input_text.washing_machine_status
-  - wait_for_trigger:
-    - platform: state
-      entity_id:
-      - binary_sensor.washing_machine_activity_state
-      for:
-        hours: 0
-        minutes: 0
-        seconds: 30
-      to: 'off'
-  - service: switch.turn_off
-    data: {}
-    target:
-      entity_id: switch.washing_machine
-  - if:
-    - condition: time
-      before: 08:00:00
-      weekday:
-      - sat
-      - sun
-    then:
     - service: input_text.set_value
       data:
-        value: Waiting until 08:00 to alert end of cycle.
+        value: Wash cycle in progress.
       target:
         entity_id: input_text.washing_machine_status
     - wait_for_trigger:
-      - platform: time
-        at: 08:00:00
-  - if:
-    - condition: time
-      before: 07:00:00
-      weekday:
-      - fri
-      - thu
-      - wed
-      - tue
-      - mon
-    then:
-    - service: input_text.set_value
-      data:
-        value: Waiting until 07:00 to alert end of cycle.
+        - platform: state
+          entity_id:
+            - binary_sensor.washing_machine_activity_state
+          for:
+            hours: 0
+            minutes: 0
+            seconds: 30
+          to: "off"
+    - service: switch.turn_off
+      data: {}
       target:
-        entity_id: input_text.washing_machine_status
-    - wait_for_trigger:
-      - platform: time
-        at: 07:00:00
-  - service: script.ifttt_notification
-    data:
-      title: HomeAssistant
-      message: Washing machine has finished cycle.
-  - service: switch.turn_on
-    data: {}
-    target:
-      entity_id: switch.washing_machine
+        entity_id: switch.washing_machine
+    - if:
+        - condition: time
+          before: 08:00:00
+          weekday:
+            - sat
+            - sun
+      then:
+        - service: input_text.set_value
+          data:
+            value: Waiting until 08:00 to alert end of cycle.
+          target:
+            entity_id: input_text.washing_machine_status
+        - wait_for_trigger:
+            - platform: time
+              at: 08:00:00
+    - if:
+        - condition: time
+          before: 07:00:00
+          weekday:
+            - fri
+            - thu
+            - wed
+            - tue
+            - mon
+      then:
+        - service: input_text.set_value
+          data:
+            value: Waiting until 07:00 to alert end of cycle.
+          target:
+            entity_id: input_text.washing_machine_status
+        - wait_for_trigger:
+            - platform: time
+              at: 07:00:00
+    - service: script.ifttt_notification
+      data:
+        title: HomeAssistant
+        message: Washing machine has finished cycle.
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id: switch.washing_machine
   mode: single
   icon: mdi:washing-machine
 ...

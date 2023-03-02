@@ -1,294 +1,290 @@
 ---
-- id: '1673106831357'
+- id: "1673106831357"
   alias: Living Room TV Power Saver
   description: Turn off TV if inactive after 23:00.
   trigger:
-  - platform: time_pattern
-    hours: '23'
-    minutes: /5
-    seconds: '0'
-  - platform: time_pattern
-    hours: '0'
-    minutes: /5
-    seconds: '0'
+    - platform: time_pattern
+      hours: "23"
+      minutes: /5
+      seconds: "0"
+    - platform: time_pattern
+      hours: "0"
+      minutes: /5
+      seconds: "0"
   condition:
-  - condition: state
-    entity_id: binary_sensor.living_room_activity_state
-    state: 'off'
-  - condition: state
-    state: 'on'
-    entity_id: switch.living_room
+    - condition: state
+      entity_id: binary_sensor.living_room_activity_state
+      state: "off"
+    - condition: state
+      state: "on"
+      entity_id: switch.living_room
   action:
-  - type: turn_off
-    device_id: bacf57e5a27745b1c2233bc3245d5cc1
-    entity_id: switch.living_room
-    domain: switch
+    - type: turn_off
+      device_id: bacf57e5a27745b1c2233bc3245d5cc1
+      entity_id: switch.living_room
+      domain: switch
   mode: single
-- id: '1622581753673'
+- id: "1622581753673"
   alias: Idle Radio
   description: Turn off kitchen radio when it has been idle for 10 minutes
   trigger:
-  - platform: state
-    entity_id: media_player.kitchen_radio
-    to: idle
-    for: 00:10:00
+    - platform: state
+      entity_id: media_player.kitchen_radio
+      to: idle
+      for: 00:10:00
   condition: []
   action:
-  - service: media_player.turn_off
-    target:
-      entity_id: media_player.kitchen_radio
+    - service: media_player.turn_off
+      target:
+        entity_id: media_player.kitchen_radio
   mode: single
-- id: '1622532153673'
+- id: "1622532153673"
   alias: Idle Living Room TV
   description: Turn off lounge TV when it has been idle for 5 minutes
   trigger:
-  - platform: state
-    entity_id: media_player.living_room_tv_2
-    to: standby
-    for: 00:05:00
+    - platform: state
+      entity_id: media_player.living_room_tv_2
+      to: standby
+      for: 00:05:00
   condition: []
   action:
-  - service: media_player.turn_off
-    target:
-      entity_id: media_player.living_room_tv_2
+    - service: media_player.turn_off
+      target:
+        entity_id: media_player.living_room_tv_2
   mode: single
-- id: '1622532153674'
+- id: "1622532153674"
   alias: Kitchen TV power saver
   description: Kill power to Kitchen TV overnight
   trigger:
-  - platform: time_pattern
-    hours: '22'
-    minutes: /5
-    seconds: '0'
+    - platform: time_pattern
+      hours: "22"
+      minutes: /5
+      seconds: "0"
   condition:
-  - condition: state
-    entity_id: binary_sensor.kitchen_tv_activity_state
-    state: 'off'
-  - condition: state
-    entity_id: switch.kitchen_tv
-    state: 'on'
-  action:
-  - service: switch.turn_off
-    data: {}
-    target:
+    - condition: state
+      entity_id: binary_sensor.kitchen_tv_activity_state
+      state: "off"
+    - condition: state
       entity_id: switch.kitchen_tv
+      state: "on"
+  action:
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id: switch.kitchen_tv
   mode: single
-- id: '1622532153675'
+- id: "1622532153675"
   alias: Kitchen TV power on
   description: Return power to Kitchen TV in the morning
   trigger:
-  - platform: time
-    at:
-    - 06:30:00
+    - platform: time
+      at:
+        - 06:30:00
   condition:
-  - condition: state
-    entity_id: switch.kitchen_tv
-    state: 'off'
-  action:
-  - service: switch.turn_on
-    target:
+    - condition: state
       entity_id: switch.kitchen_tv
-    data: {}
+      state: "off"
+  action:
+    - service: switch.turn_on
+      target:
+        entity_id: switch.kitchen_tv
+      data: {}
   mode: single
-- id: '1673134399441'
+- id: "1673134399441"
   alias: Living room TV power on
   description: Return power to living room TV in the morning
   trigger:
-  - platform: time
-    at: 06:30:00
+    - platform: time
+      at: 06:30:00
   condition:
-  - condition: state
-    entity_id: switch.living_room
-    state: 'off'
-  action:
-  - service: switch.turn_on
-    data: {}
-    target:
+    - condition: state
       entity_id: switch.living_room
+      state: "off"
+  action:
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id: switch.living_room
   mode: single
-- id: '16118283879'
+- id: "16118283879"
   alias: Doorbell alerts
   description: Send configured alerts when the doorbell is pushed.
   trigger:
-  - platform: event
-    event_type: esphome.doorbell_pressed
+    - platform: event
+      event_type: esphome.doorbell_pressed
   variables:
     message: Someone at the door there is!
   action:
-  - service: script.doorbell_alert_alexa
-    data:
-      message: '{{ message }}'
-  - service: script.doorbell_alert_helen
-    data:
-      message: '{{ message }}'
-  - service: script.doorbell_alert_james
-    data:
-      message: '{{ message }}'
+    - service: script.doorbell_alert_alexa
+      data:
+        message: "{{ message }}"
+    - service: script.doorbell_alert_helen
+      data:
+        message: "{{ message }}"
+    - service: script.doorbell_alert_james
+      data:
+        message: "{{ message }}"
   mode: single
-- id: '1673215979945'
+- id: "1673215979945"
   alias: Fairy Lights on am
   description: Turn fairy lights on in morning
   trigger:
-  - platform: time
-    at: 06:25:00
+    - platform: time
+      at: 06:25:00
   condition:
-  - condition: sun
-    before: sunrise
+    - condition: sun
+      before: sunrise
   action:
-  - type: turn_on
-    device_id: fa245fa880976f311ef4240201b21827
-    entity_id: switch.fairy_lights
-    domain: switch
+    - type: turn_on
+      device_id: fa245fa880976f311ef4240201b21827
+      entity_id: switch.fairy_lights
+      domain: switch
   mode: single
-- id: '1673216508549'
-  alias: 'Fairy Lights off '
+- id: "1673216508549"
+  alias: "Fairy Lights off "
   description: Turn off fairy lights if it gets light or it's 08:40.
   trigger:
-  - platform: time
-    at:
-    - 08:40:00
-    - '23:00:00'
-    - 00:00:00
-  - platform: sun
-    event: sunrise
-    offset: 00:15:00
+    - platform: time
+      at:
+        - 08:40:00
+        - '23:00:00'
+        - 00:00:00
+    - platform: sun
+      event: sunrise
+      offset: 00:15:00
   condition: []
   action:
-  - type: turn_off
-    device_id: fa245fa880976f311ef4240201b21827
-    entity_id: switch.fairy_lights
-    domain: switch
+    - type: turn_off
+      device_id: fa245fa880976f311ef4240201b21827
+      entity_id: switch.fairy_lights
+      domain: switch
   mode: single
-- id: '1673247672412'
-  alias: 'Fairy Lights on pm '
+- id: "1673247672412"
+  alias: "Fairy Lights on pm "
   description: Turn lights on 15 minutes before sunset.
   trigger:
-  - platform: sun
-    event: sunset
-    offset: -00:15:00
+    - platform: sun
+      event: sunset
+      offset: -00:15:00
   condition: []
   action:
-  - service: automation.turn_off
-    data: {}
-    target:
-      entity_id: automation.fairy_lights_off_if_bright
-  - type: turn_on
-    device_id: fa245fa880976f311ef4240201b21827
-    entity_id: switch.fairy_lights
-    domain: switch
+    - service: automation.turn_off
+      data: {}
+      target:
+        entity_id: automation.fairy_lights_off_if_bright
+    - type: turn_on
+      device_id: fa245fa880976f311ef4240201b21827
+      entity_id: switch.fairy_lights
+      domain: switch
   mode: single
-- id: '1664517533990'
+- id: "1664517533990"
   alias: Fairy Lights Low light
   description: Turns on fairy lights if it gets dark during daytime
   trigger:
-  - platform: numeric_state
-    entity_id: sensor.conservatory_illuminance
-    below: 1024
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
+    - platform: numeric_state
+      entity_id: sensor.conservatory_illuminance
+      below: 1024
+      for:
+        hours: 0
+        minutes: 1
+        seconds: 0
   condition:
-  - condition: sun
-    after: sunrise
-    before: sunset
-  - condition: state
-    entity_id: switch.fairy_lights
-    state: 'off'
+    - condition: sun
+      after: sunrise
+      before: sunset
+    - condition: state
+      entity_id: switch.fairy_lights
+      state: "off"
   action:
-  - type: turn_on
-    device_id: fa245fa880976f311ef4240201b21827
-    entity_id: switch.fairy_lights
-    domain: switch
-  - service: automation.turn_on
-    data: {}
-    target:
-      entity_id: automation.fairy_lights_off_if_bright
+    - type: turn_on
+      device_id: fa245fa880976f311ef4240201b21827
+      entity_id: switch.fairy_lights
+      domain: switch
+    - service: automation.turn_on
+      data: {}
+      target:
+        entity_id: automation.fairy_lights_off_if_bright
   mode: single
-- id: '1673248089894'
+- id: "1673248089894"
   alias: Fairy Lights off if bright
-  description: Once fairy lights have been triggered by low light, turn off again
-    if it gets bright outside.
+  description: Once fairy lights have been triggered by low light, turn off
+    again if it gets bright outside.
   trigger:
-  - platform: time_pattern
-    minutes: /5
+    - platform: time_pattern
+      minutes: /5
   condition:
-  - condition: state
-    entity_id: sensor.conservatory_illuminance
-    state: '1024'
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
+    - condition: state
+      entity_id: sensor.conservatory_illuminance
+      state: "1024"
+      for:
+        hours: 0
+        minutes: 5
+        seconds: 0
   action:
-  - type: turn_off
-    device_id: fa245fa880976f311ef4240201b21827
-    entity_id: switch.fairy_lights
-    domain: switch
-  - service: automation.turn_off
-    data: {}
-    target:
-      entity_id: automation.fairy_lights_off_if_bright
+    - type: turn_off
+      device_id: fa245fa880976f311ef4240201b21827
+      entity_id: switch.fairy_lights
+      domain: switch
+    - service: automation.turn_off
+      data: {}
+      target:
+        entity_id: automation.fairy_lights_off_if_bright
   mode: single
-- id: '1611945742856'
-  # PM2.5 levels from Ikea VINDRIKTNING manual:
-  #
-  # Green: 0-35
-  # Amber: 36-85
-  # Red: >85  alias: Air Quality Alert
+- id: "1611945742856"
+  alias: Air Quality Alert
   description: Send IFTTT notification if PM2.5 count is too high
   trigger:
-  - platform: numeric_state
-    entity_id: sensor.landing_pm2_5
-    above: 40
-    for:
-      minutes: 5
+    - platform: numeric_state
+      entity_id: sensor.landing_pm2_5
+      above: 40
+      for:
+        minutes: 5
   action:
-  - service: script.ifttt_notification
-    data:
-      title: Air Quality Alert
-      message: 'PM2.5 level at {{ ''{:02}:{:02}''.format(now().hour, now().minute)
-        }}: {{ states(''sensor.landing_pm2_5'') }} µg/m³'
-      url: http://{{ states('input_text.hostname') }}:8123/lovelace/3
+    - service: script.ifttt_notification
+      data:
+        title: Air Quality Alert
+        message: >-
+          PM2.5 level at {{ '{:02}:{:02}'.format(now().hour, now().minute) }}:
+          {{ states('sensor.landing_pm2_5') }} µg/m³
+        url: http://{{ states('input_text.hostname') }}:8123/lovelace/3
   mode: single
-- id: '1673171955502'
+- id: "1673171955502"
   alias: Warm conservatory
   description: Notify if conservatory is warmer than landing.
   trigger:
-  - platform: numeric_state
-    entity_id: sensor.landing_temperature
-    below: sensor.conservatory_temperature
-    for:
-      minutes: 10
+    - platform: numeric_state
+      entity_id: sensor.landing_temperature
+      below: sensor.conservatory_temperature
+      for:
+        minutes: 10
   condition:
-  - condition: numeric_state
-    entity_id: sensor.conservatory_temperature
-    below: 20
+    - condition: numeric_state
+      entity_id: sensor.conservatory_temperature
+      below: 20
   action:
-  - service: script.ifttt_notification
-    data:
-      title: Comfort advice
-      message: At {{ '{:02}:{:02}'.format(now().hour, now().minute) }} the conservatory's
-        warmer than inside now!
-      url: http://{{ states('input_text.hostname') }}:8123/lovelace/3
+    - service: script.ifttt_notification
+      data:
+        title: Comfort advice
+        message: At {{ '{:02}:{:02}'.format(now().hour, now().minute) }} the
+          conservatory's warmer than inside now!
+        url: http://{{ states('input_text.hostname') }}:8123/lovelace/3
   mode: single
-- id: '1673172557644'
+- id: "1673172557644"
   alias: Frost alerts
   description: Sends alert when predicted temperature is lower than 1°C.
   trigger:
-  - platform: numeric_state
-    entity_id: sensor.stoke_bishop_temperature_daily
-    below: 1
+    - platform: numeric_state
+      entity_id: sensor.stoke_bishop_temperature_daily
+      below: 1
   condition: []
   action:
-  - service: script.ifttt_notification
-    data:
-      title: Frost alert
-      message: 'Low temperature of {{ states(''sensor.stoke_bishop_temperature_daily'')
-        + state_attr(''sensor.stoke_bishop_temperature_daily'', ''unit_of_measurement'')
-        }} predicted.
-
-        '
-      url: https://www.metoffice.gov.uk/weather/forecast/gcnhu5dcz
+    - service: script.ifttt_notification
+      data:
+        title: Frost alert
+        message: >
+          Low temperature of {{ states('sensor.stoke_bishop_temperature_daily')
+          + state_attr('sensor.stoke_bishop_temperature_daily',
+          'unit_of_measurement') }} predicted.
+        url: https://www.metoffice.gov.uk/weather/forecast/gcnhu5dcz
   mode: single
 ...

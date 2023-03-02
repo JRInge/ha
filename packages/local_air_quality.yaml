@@ -7,7 +7,9 @@ local_air_quality:
   sensor:
     - platform: rest
       name: st_pauls_air
-      resource: https://opendata.bristol.gov.uk/api/records/1.0/search/?dataset=air-quality-data-continuous&q=&rows=1&sort=date_time&facet=location&refine.location=AURN+St+Pauls
+      resource: "https://opendata.bristol.gov.uk/api/records/1.0/search/\
+        ?dataset=air-quality-data-continuous&q=&rows=1&sort=date_time\
+        &facet=location&refine.location=AURN+St+Pauls"
       value_template: "OK"
       json_attributes_path: "$.records.[0].fields"
       json_attributes:
@@ -20,34 +22,34 @@ local_air_quality:
       scan_interval: 3600
   template:
     - sensor:
-      - name: St Pauls NO
-        state: "{{ state_attr('sensor.st_pauls_air', 'no') }}"
-        state_class: measurement
-        device_class: nitrogen_monoxide
-        unit_of_measurement: "µg/m³"
-      - name: St Pauls NO2
-        state: "{{ state_attr('sensor.st_pauls_air', 'no2') }}"
-        state_class: measurement
-        device_class: nitrogen_dioxide
-        unit_of_measurement: "µg/m³"
-      - name: St Pauls NOx
-        state: "{{ state_attr('sensor.st_pauls_air', 'nox') }}"
-        state_class: measurement
-        device_class: nitrous_oxide
-        unit_of_measurement: "µg/m³"
-      - name: St Pauls O3
-        state: "{{ state_attr('sensor.st_pauls_air', 'o3') }}"
-        state_class: measurement
-        device_class: ozone
-        unit_of_measurement: "µg/m³"
-      - name: St Pauls PM10
-        state: "{{ state_attr('sensor.st_pauls_air', 'pm10') }}"
-        state_class: measurement
-        device_class: pm10
-        unit_of_measurement: "µg/m³"
-      - name: St Pauls PM2.5
-        state: "{{ state_attr('sensor.st_pauls_air', 'pm25') }}"
-        state_class: measurement
-        device_class: pm25
-        unit_of_measurement: "µg/m³"
+        - name: St Pauls NO
+          state: "{{ state_attr('sensor.st_pauls_air', 'no') }}"
+          state_class: measurement
+          device_class: nitrogen_monoxide
+          unit_of_measurement: "µg/m³"
+        - name: St Pauls NO2
+          state: "{{ state_attr('sensor.st_pauls_air', 'no2') }}"
+          state_class: measurement
+          device_class: nitrogen_dioxide
+          unit_of_measurement: "µg/m³"
+        - name: St Pauls NOx
+          state: "{{ state_attr('sensor.st_pauls_air', 'nox') }}"
+          state_class: measurement
+          device_class: nitrous_oxide
+          unit_of_measurement: "µg/m³"
+        - name: St Pauls O3
+          state: "{{ state_attr('sensor.st_pauls_air', 'o3') }}"
+          state_class: measurement
+          device_class: ozone
+          unit_of_measurement: "µg/m³"
+        - name: St Pauls PM10
+          state: "{{ state_attr('sensor.st_pauls_air', 'pm10') }}"
+          state_class: measurement
+          device_class: pm10
+          unit_of_measurement: "µg/m³"
+        - name: St Pauls PM2.5
+          state: "{{ state_attr('sensor.st_pauls_air', 'pm25') }}"
+          state_class: measurement
+          device_class: pm25
+          unit_of_measurement: "µg/m³"
 ...

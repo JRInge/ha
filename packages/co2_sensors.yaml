@@ -52,25 +52,25 @@ co2_sensors:
       scan_interval: 180
   template:
     sensor:
-    - name: "Carbon Tracer Grid fossil fuel percentage"
-      unique_id: 1677706466
-      icon: mdi:molecule-co2
-      state_class: measurement
-      unit_of_measurement: '%'
-      state: |-
-        {% if states.sensor.carbon_tracer_grid_energy_mix %}
-          {% set ns = namespace(sum=0) -%}
-          {%- for key, val in
-            states.sensor.carbon_tracer_grid_energy_mix.attributes.items() -%}
-            {%- set ns.sum = ns.sum + float(val, 0) -%}
-          {%- endfor -%}
-          {{ (100 * (state_attr('sensor.carbon_tracer_grid_energy_mix', 'Coal')
-            | default(0, true)
-            + state_attr('sensor.carbon_tracer_grid_energy_mix',
-            'European Interconnect') | default(0, true)
-            + state_attr('sensor.carbon_tracer_grid_energy_mix', 'Gas Turbine')
-            | default(0, true)) / ns.sum)  | round(2) }}
-        {% else %}
-          unknown
-        {% endif %}
+      - name: "Carbon Tracer Grid fossil fuel percentage"
+        unique_id: 1677706466
+        icon: mdi:molecule-co2
+        state_class: measurement
+        unit_of_measurement: '%'
+        state: |-
+          {% if states.sensor.carbon_tracer_grid_energy_mix %}
+            {% set ns = namespace(sum=0) -%}
+            {%- for key, val in
+              states.sensor.carbon_tracer_grid_energy_mix.attributes.items() -%}
+              {%- set ns.sum = ns.sum + float(val, 0) -%}
+            {%- endfor -%}
+            {{ (100 * (state_attr('sensor.carbon_tracer_grid_energy_mix', 'Coal')
+              | default(0, true)
+              + state_attr('sensor.carbon_tracer_grid_energy_mix',
+              'European Interconnect') | default(0, true)
+              + state_attr('sensor.carbon_tracer_grid_energy_mix', 'Gas Turbine')
+              | default(0, true)) / ns.sum)  | round(2) }}
+          {% else %}
+            unknown
+          {% endif %}
 ...
