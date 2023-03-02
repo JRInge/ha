@@ -64,12 +64,12 @@ co2_sensors:
               states.sensor.carbon_tracer_grid_energy_mix.attributes.items() -%}
               {%- set ns.sum = ns.sum + float(val, 0) -%}
             {%- endfor -%}
-            {{ (100 * (state_attr('sensor.carbon_tracer_grid_energy_mix', 'Coal')
-              | default(0, true)
+            {{ (100 * (state_attr('sensor.carbon_tracer_grid_energy_mix',
+              'Coal') | default(0, true)
               + state_attr('sensor.carbon_tracer_grid_energy_mix',
               'European Interconnect') | default(0, true)
-              + state_attr('sensor.carbon_tracer_grid_energy_mix', 'Gas Turbine')
-              | default(0, true)) / ns.sum)  | round(2) }}
+              + state_attr('sensor.carbon_tracer_grid_energy_mix',
+              'Gas Turbine') | default(0, true)) / ns.sum)  | round(2) }}
           {% else %}
             unknown
           {% endif %}

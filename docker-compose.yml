@@ -15,7 +15,7 @@ services:
     environment:
       - GROUPID=1000
       - HOSTNAME=${HOSTNAME}
-#      - NMBD=true
+      # - NMBD=true
       - TZ=Europe/London
       - USERID=1000
       - WORKGROUP=WORKGROUP
