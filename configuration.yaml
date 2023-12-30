@@ -12,7 +12,7 @@ tts:
   - platform: google_translate
 
 recorder:
-  purge_keep_days: 730
+  purge_keep_days: 180
   commit_interval: 30
   exclude:
     entities:
@@ -22,14 +22,6 @@ recorder:
 input_text:
   hostname:
     initial: !env_var HOSTNAME
-
-history:
-  exclude:
-    domains:
-      - automation
-      - updater
-    entities:
-      - binary_sensor.updater
 
 group: !include groups.yaml
 automation: !include automations.yaml
@@ -41,8 +33,6 @@ scene: !include scenes.yaml
 ifttt:
   key: !secret ifttt_key
 
-discovery:
-
 rest_command:
   voice_monkey:
     url: https://api.voicemonkey.io/trigger
@@ -50,4 +40,8 @@ rest_command:
     verify_ssl: true
     content_type: 'application/json'
     payload: !secret voice_monkey_template
+
+device_tracker:
+  - platform: google_maps
+    username: !secret gmail
 ...

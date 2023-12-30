@@ -3,21 +3,26 @@
 ########
 
 covid_sensor:
-  sensor:
-    # Local case rate
-    - platform: command_line
-      command: >
-        /home/homeassistant/scripts/fetch_covid_rate.py
-        "`/home/homeassistant/scripts/hass_secret postcode`"
-      name: covid_rate
-      unit_of_measurement: 'cases/100k'
-      scan_interval: 21600
-      json_attributes:
-        - date
-      value_template: "{{ float(value_json.rate | replace(',', ''), 0) }}"
+  command_line:
+    - sensor:
+        # Local case rate
+        command: >
+          /home/homeassistant/scripts/fetch_covid_rate.py
+          "`/home/homeassistant/scripts/hass_secret postcode`"
+        name: covid_rate
+        unit_of_measurement: 'cases/100k'
+        scan_interval: 21600
+        state_class: measurement
+        json_attributes:
+          - date
+        value_template: "{{ float(value_json.rate | replace(',', ''), 0) }}"
 
 #
 # Alert levels are not currently being published
+#
+# This will need to be refactored to use the new command_line platform
+# if it is needed again in future:
+# https://www.home-assistant.io/integrations/command_line/
 ########
 
 # City-wide COVID alert level

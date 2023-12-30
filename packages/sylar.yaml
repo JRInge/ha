@@ -5,19 +5,15 @@
 # Status detection and power off switch for sylar NAS
 
 sylar:
-  switch:
-    - platform: command_line
-      scan_interval: 60
-      switches:
-        sylar:
-          friendly_name: Sylar
-          command_off: >
-            /home/homeassistant/scripts/sylar_off.py sylar.broadband
-            "`/home/homeassistant/scripts/hass_secret sylar_pwd`"
-          command_state: '/bin/ping -c2 -w3 sylar.broadband'
-  homeassistant:
-    customize:
-      switch.sylar:
+  command_line:
+    - switch:
+        name: Sylar
+        command_on: "true"
+        command_off: >
+          /home/homeassistant/scripts/sylar_off.py sylar.broadband
+          "`/home/homeassistant/scripts/hass_secret sylar_pwd`"
+        command_state: '/bin/ping -c2 -w3 sylar.broadband'
         icon: "mdi:server-network"
-        device_class: connectivity
+        scan_interval: 60
+        unique_id: 1703938601
 ...
