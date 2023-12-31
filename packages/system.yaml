@@ -3,7 +3,7 @@
 ########
 
 system_sensors:
-  command_line:  
+  command_line:
     - sensor:
         name: CPU Temperature
         command: "cat /sys/class/thermal/thermal_zone0/temp"
