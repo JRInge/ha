@@ -372,7 +372,7 @@
   description: ''
   trigger:
   - platform: time
-    at: 06:27:30
+    at: 05:55:30
   condition:
   - condition: time
     weekday:
@@ -390,15 +390,15 @@
       brightness_pct: 25
       effect: None
       hs_color:
-      - 30
-      - 50
+      - 277
+      - 41
     target:
       device_id: 8eda9121d65e5858cfb81cb26cd111c2
   - service: light.turn_on
     data:
       hs_color:
-      - 30
-      - 50
+      - 277
+      - 41
       brightness_pct: 90
       transition: 300
     target:
@@ -514,4 +514,25 @@
     data: {}
     target:
       entity_id: switch.outside_lights
+  mode: single
+- id: '1711299271107'
+  alias: Jess toggle LEDs
+  description: Toggle Jess's LED string as night-lights.
+  trigger:
+  - type: turned_on
+    platform: device
+    device_id: ca7e05dcc23c4dadd292311407c6f48f
+    entity_id: 91d3d1a355222dd696fe1acf986b834c
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: light.toggle
+    metadata: {}
+    data:
+      brightness_pct: 18
+      hs_color:
+      - 56
+      - 67
+    target:
+      device_id: ca7e05dcc23c4dadd292311407c6f48f
   mode: single
