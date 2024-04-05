@@ -30,18 +30,13 @@ scene: !include scenes.yaml
 
 # media_player: !include players.yaml
 
-ifttt:
-  key: !secret ifttt_key
-
-rest_command:
-  voice_monkey:
-    url: https://api.voicemonkey.io/trigger
-    method: POST
-    verify_ssl: true
-    content_type: 'application/json'
-    payload: !secret voice_monkey_template
-
 device_tracker:
   - platform: google_maps
     username: !secret gmail
+
+notify:
+  - name: ADULT_PHONES
+    platform: group
+    services:
+      - service: mobile_app_pixel_6
 ...

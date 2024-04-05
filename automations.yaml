@@ -246,7 +246,7 @@
   mode: single
 - id: '1611945742856'
   alias: Air Quality Alert
-  description: Send IFTTT notification if PM2.5 count is too high
+  description: Send notification if PM2.5 count is too high
   trigger:
   - platform: numeric_state
     entity_id: sensor.landing_pm2_5
@@ -254,12 +254,14 @@
     for:
       minutes: 5
   action:
-  - service: script.ifttt_notification
+  - service: notify.mobile_app_pixel_6
     data:
       title: Air Quality Alert
       message: 'PM2.5 level at {{ ''{:02}:{:02}''.format(now().hour, now().minute)
         }}: {{ states(''sensor.landing_pm2_5'') }} µg/m³'
-      url: http://{{ states('input_text.hostname') }}:8123/lovelace/3
+      data:
+        clickAction: /lovelace/atmosphere
+        channel: Alerts
   mode: single
 - id: '1673171955502'
   alias: Warm conservatory
@@ -275,12 +277,14 @@
     entity_id: sensor.conservatory_temperature
     below: 20
   action:
-  - service: script.ifttt_notification
+  - service: notify.adult_phones
     data:
       title: Comfort advice
       message: At {{ '{:02}:{:02}'.format(now().hour, now().minute) }} the conservatory's
         warmer than inside now!
-      url: http://{{ states('input_text.hostname') }}:8123/lovelace/3
+      data:
+        clickAction: /lovelace/atmosphere
+        channel: Alerts
   mode: single
 - id: '1673172557644'
   alias: Frost alerts
@@ -291,15 +295,16 @@
     below: 1
   condition: []
   action:
-  - service: script.ifttt_notification
+  - service: notify.adult_phones
     data:
       title: Frost alert
-      message: 'Low temperature of {{ states(''sensor.stoke_bishop_temperature_daily'')
+      message: >
+        Low temperature of {{ states(''sensor.stoke_bishop_temperature_daily'')
         + state_attr(''sensor.stoke_bishop_temperature_daily'', ''unit_of_measurement'')
         }} predicted.
-
-        '
-      url: https://www.metoffice.gov.uk/weather/forecast/gcnhu5dcz
+      data:
+        clickAction: https://www.metoffice.gov.uk/weather/forecast/gcnhu5dcz
+        channel: Alerts
   mode: single
 - id: '1679266158966'
   alias: Washing cycle complete
@@ -319,10 +324,13 @@
     entity_id: sensor.washing_machine_power
     above: 0
   action:
-  - service: script.ifttt_notification
+  - service: notify.adult_phones
     data:
       title: Washing Machine
       message: Cycle finished. Remember to switch off.
+      data:
+        channel: Washing Machine
+        clickAction: noAction
   mode: single
 - id: '1689269125259'
   alias: 'LEDs off '

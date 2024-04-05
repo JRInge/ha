@@ -8,11 +8,10 @@ covid_automation:
   automation:
     - id: '1611945742569'
       alias: COVID Alert
-      description: Send IFTTT notification if COVID rate or alert level changes.
+      description: Send notification if COVID rate or alert level changes.
       trigger:
         - platform: state
-          entity_id: sensor.covid_alert_raw
-          attribute: level
+          entity_id: sensor.covid_alert_level
         - platform: state
           entity_id: sensor.covid_rate
       condition:
@@ -23,14 +22,16 @@ covid_automation:
           entity_id: sensor.covid_rate
           above: 0
       action:
-        - service: script.ifttt_notification
+        - service: notify.adult_phones
           data:
             title: COVID Alert
             message: >
               {% if not states('sensor.covid_alert_raw') == 'unknown' -%}
               {{ state_attr('sensor.covid_alert_raw', 'name') }}, {% endif %}
               {{- states('sensor.covid_rate') }}/100k people.
-            url: "https://coronavirus.data.gov.uk/search?postcode=\
-              {{- states('input_text.postcode') | replace(' ', '+') -}}"
+            data:
+              clickAction: "https://coronavirus.data.gov.uk/search?postcode=\
+                {{- states('input_text.postcode') | replace(' ', '+') -}}"
+              channel: Alerts
       mode: single
 ...

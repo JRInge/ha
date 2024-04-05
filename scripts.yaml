@@ -1,32 +1,4 @@
 ---
-ifttt_notification:
-  alias: IFTTT Notification
-  fields:
-    title:
-      selector:
-        text: null
-      default: HomeAssistant
-    message:
-      selector:
-        text: null
-    url:
-      selector:
-        text: null
-  sequence:
-    - service: ifttt.trigger
-      data:
-        event: ha_alert
-        value1: |-
-          {% if title is defined %}
-            {{ title }}
-          {% else %}
-            HomeAssistant
-          {% endif %}
-        value2: "{% if message is defined %}{{ message }}{% endif %}"
-        value3: "{% if url is defined %}{{ url }}{% endif %}"
-  mode: parallel
-  icon: mdi:cellphone-message
-  max: 10
 alexa_notification:
   alias: Alexa Notification
   sequence:
@@ -165,7 +137,7 @@ washing_machine_time_delay:
         - wait_for_trigger:
             - platform: time
               at: 07:00:00
-    - service: script.ifttt_notification
+    - service: notify.ADULT_PHONES
       data:
         title: HomeAssistant
         message: Washing machine has finished cycle.

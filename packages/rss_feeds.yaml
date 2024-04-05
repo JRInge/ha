@@ -19,9 +19,11 @@ rss_feeds:
         platform: event
         event_type: feedreader
       action:
-        - service: script.ifttt_notification
+        - service: notify.mobile_app_pixel_6
           data:
             title: "{{ trigger.event.data.title }}"
             message: "{{ trigger.event.data.description }}"
-            url: "{{ trigger.event.data.link }}"
+            data:
+              clickAction: "{{ trigger.event.data.link }}"
+              channel: Alerts
 ...

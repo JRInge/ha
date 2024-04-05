@@ -7,11 +7,16 @@ recycling_automation:
     - id: '1611943017008'
       alias: Bin day notification
       description: >
-        Send an IFTTT notification when it is Green Bin Day or Black Bin Day.
+        Send a notification when it is Green Bin Day or Black Bin Day.
       trigger:
         - platform: time
           at: 06:00:00
       condition:
+        - condition: not
+          conditions:
+            - condition: state
+              entity_id: input_select.energy_schedule
+              state: Away
         - condition: or
           conditions:
             - condition: state
@@ -21,7 +26,7 @@ recycling_automation:
               entity_id: sensor.green_bin
               state: Today
       action:
-        - service: script.ifttt_notification
+        - service: notify.adult_phones
           data:
             title: Bin day
             message: |
@@ -29,5 +34,8 @@ recycling_automation:
               {% if is_state('sensor.green_bin', 'Today') -%}
                 {% set colour = 'Green' %}
               {%- endif -%} {{ colour }} Bin Day
+            data:
+              clickAction: noAction
+              channel: Recycling
       mode: single
 ...
