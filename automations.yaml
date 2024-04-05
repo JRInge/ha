@@ -96,6 +96,11 @@
   - condition: state
     entity_id: switch.kitchen_tv
     state: 'off'
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: input_select.energy_schedule
+      state: Away
   action:
   - service: switch.turn_on
     target:
@@ -112,6 +117,11 @@
   - condition: state
     entity_id: switch.living_room
     state: 'off'
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: input_select.energy_schedule
+      state: Away
   action:
   - service: switch.turn_on
     data: {}
@@ -209,6 +219,11 @@
     state: 'off'
   - condition: time
     after: 06:25:00
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: input_select.energy_schedule
+      state: Away
   action:
   - type: turn_on
     device_id: fa245fa880976f311ef4240201b21827
@@ -276,6 +291,11 @@
   - condition: numeric_state
     entity_id: sensor.conservatory_temperature
     below: 20
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: input_select.energy_schedule
+      state: Away
   action:
   - service: notify.adult_phones
     data:
@@ -361,6 +381,9 @@
     - wed
     - thu
     - fri
+  - condition: state
+    entity_id: input_select.energy_schedule
+    state: Termtime
   action:
   - service: light.turn_on
     data:
@@ -408,6 +431,9 @@
     - wed
     - thu
     - fri
+  - condition: state
+    entity_id: input_select.energy_schedule
+    state: Termtime
   action:
   - service: light.turn_on
     data:
