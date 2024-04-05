@@ -14,7 +14,7 @@ airq_min_temp:
           target:
             entity_id:
               - weather.openweathermap
-          response_variable: forecasts
+          response_variable: forecasts	
       sensor:
         - name: Minimum temperature next 12 hours
           unique_id: temperature_12_hour_min

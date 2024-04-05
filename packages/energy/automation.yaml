@@ -4,24 +4,6 @@
 
 energy_automation:
   automation:
-    - id: 'set_away'
-      alias: Activate away schedule
-      trigger:
-        - platform: state
-          entity_id: input_select.energy_schedule
-          to: 'Away'
-    - id: 'set_holiday'
-      alias: Activate holiday schedule
-      trigger:
-        - platform: state
-          entity_id: input_select.energy_schedule
-          to: 'Holiday'
-    - id: 'set_termtime'
-      alias: Activate termtime schedule
-      trigger:
-        - platform: state
-          entity_id: input_select.energy_schedule
-          to: 'termtime'
     - id: 'energy_auto_01'
       alias: Efergy Battery Low
       description: Send IFTTT notification if energy meter battery is low.
