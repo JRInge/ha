@@ -311,17 +311,19 @@
   description: Sends alert when predicted temperature is lower than 1°C.
   trigger:
   - platform: numeric_state
-    entity_id: sensor.stoke_bishop_temperature_daily
+    entity_id:
+    - sensor.minimum_temperature_next_12_hours
     below: 1
   condition: []
   action:
   - service: notify.adult_phones
     data:
       title: Frost alert
-      message: >
-        Low temperature of {{ states(''sensor.stoke_bishop_temperature_daily'')
-        + state_attr(''sensor.stoke_bishop_temperature_daily'', ''unit_of_measurement'')
+      message: 'Low temperature of {{ states(''sensor.minimum_temperature_next_12_hours'')
+        + state_attr(''sensor.minimum_temperature_next_12_hours'', ''unit_of_measurement'')
         }} predicted.
+
+        '
       data:
         clickAction: https://www.metoffice.gov.uk/weather/forecast/gcnhu5dcz
         channel: Alerts

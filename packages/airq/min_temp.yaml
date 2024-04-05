@@ -1,0 +1,25 @@
+---
+# Find the lowest temperature in the next 12 hours
+########
+
+airq_min_temp:
+  template:
+    - trigger:
+        - platform: time_pattern
+          hours: "/1"
+      action:
+        - service: weather.get_forecasts
+          data:
+            type: hourly
+          target:
+            entity_id:
+              - weather.openweathermap
+          response_variable: forecasts	
+      sensor:
+        - name: Minimum temperature next 12 hours
+          unique_id: temperature_12_hour_min
+          state: >
+            {{ forecasts['weather.openweathermap'].forecast[0:5]
+            | map(attribute='temperature') |min }}
+          unit_of_measurement: °C
+...
