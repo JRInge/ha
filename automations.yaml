@@ -25,12 +25,15 @@
   mode: single
 - id: '1622581753673'
   alias: Idle Radio
-  description: Turn off kitchen radio when it has been idle for 10 minutes
+  description: Turn off radios when they have been idle for 10 minutes
   trigger:
   - platform: state
     entity_id:
     - media_player.kitchen_radio
-    to: idle
+    - media_player.dining_room_radio
+    to:
+    - idle
+    - paused
     for:
       hours: 0
       minutes: 10
@@ -104,7 +107,7 @@
   description: Return power to living room TV in the morning
   trigger:
   - platform: time
-    at: 06:30:00
+    at: 06:00:00
   condition:
   - condition: state
     entity_id: switch.living_room
