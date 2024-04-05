@@ -1,0 +1,24 @@
+---
+- id: '1632907126524'
+  name: All Off
+  entities:
+    switch.kitchen_tv:
+      friendly_name: Kitchen TV
+      state: 'off'
+    switch.office_workstation:
+      friendly_name: Office Workstation
+      state: 'off'
+    switch.living_room_power:
+      friendly_name: Living Room Power
+      state: 'off'
+    switch.hall_lamp:
+      friendly_name: Hall lamp
+      state: 'off'
+    switch.sylar:
+      friendly_name: Sylar
+      state: 'off'
+    media_player.kitchen_radio:
+      friendly_name: Kitchen Radio
+      state: 'off'
+  icon: mdi:monitor-speaker-off
+...
