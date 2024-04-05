@@ -43,7 +43,7 @@
   - service: media_player.turn_off
     data: {}
     target:
-      entity_id: media_player.kitchen_radio
+      entity_id: '{{ trigger.entity_id }}'
   mode: single
 - id: '1622532153673'
   alias: Idle Living Room TV
