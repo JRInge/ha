@@ -1,7 +1,0 @@
----
-extends: default
-
-ignore: |
-  /automations.yaml
-
-...
