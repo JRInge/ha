@@ -17,14 +17,18 @@ co2_sensors:
       icon: mdi:molecule-co2
       state_class: measurement
       unit_of_measurement: gCO2eq/kWh
-      value_template: "{{ (value_json.data | default('unknown', true)) }}"
+      availability: &avail_test |-
+        {{ value_json is not undefined and value_json.data is not undefined
+        and value_json.error is undefined }}
+      value_template: '{{ value_json.data }}'
     - platform: rest
       name: "Carbon Tracer Grid energy mix"
       unique_id: 1677706464
       resource: "https://carbontracer.nationalgrid.co.uk/carbonapi/\
         get_energy_mix_now/128239"
       scan_interval: 180
-      value_template: "OK"
+      availability: *avail_test
+      value_template: true
       json_attributes_path: "$.data"
       json_attributes:
         - "Combined Heat & Power"
@@ -43,6 +47,7 @@ co2_sensors:
       unique_id: 1677706465
       resource: "https://carbontracer.nationalgrid.co.uk/carbonapi/\
         get_demand_now/128239"
+      availability: *avail_test
       value_template: |-
         {%- set val = (value_json | default('unknown', true)) -%}
         {{- val if (val == 'unknown') else (val.data * 1000) -}}
@@ -57,6 +62,8 @@ co2_sensors:
         icon: mdi:molecule-co2
         state_class: measurement
         unit_of_measurement: '%'
+        availability: |-
+          {{ states("sensor.carbon_tracer_grid_energy_mix") != "unavailable" }}
         state: |-
           {% if states.sensor.carbon_tracer_grid_energy_mix %}
             {% set ns = namespace(sum=0) -%}
