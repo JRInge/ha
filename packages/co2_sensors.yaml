@@ -20,7 +20,7 @@ co2_sensors:
       availability: &avail_test |-
         {{ value_json is not undefined and value_json.data is not undefined
         and value_json.error is undefined }}
-      value_template: '{{ value_json.data }}'
+      value_template: '{{ value_json.data | default(0) }}'
     - platform: rest
       name: "Carbon Tracer Grid energy mix"
       unique_id: 1677706464
@@ -78,6 +78,6 @@ co2_sensors:
               + state_attr('sensor.carbon_tracer_grid_energy_mix',
               'Gas Turbine') | default(0, true)) / ns.sum)  | round(2) }}
           {% else %}
-            unknown
+            0
           {% endif %}
 ...
