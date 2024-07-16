@@ -36,6 +36,14 @@ def parse(r: Dict[str, Any]) -> Dict[str, Dict[str, str]]:
         {
             'name': 'Green',
             'description': '240L Garden Waste Bin'
+        },
+        {
+            'name': 'Box',
+            'description': '55L Green Recycling Box'
+        },
+        {
+            'name': 'Tree',
+            'description': 'Christmas Tree'
         }
     ]
 
@@ -53,13 +61,13 @@ def parse(r: Dict[str, Any]) -> Dict[str, Dict[str, str]]:
         if container != []:
             collection = list(container)[0]['collection'][0]
             return {
-               'last_date': check_date(collection['lastCollectionDate'][:10]),
-               'next_date': check_date(collection['nextCollectionDate'][:10])
+               'last': check_date(collection['lastCollectionDate'][:10]),
+               'next': check_date(collection['nextCollectionDate'][:10])
             }
         else:
             return {
-               'last_date': 'Unknown',
-               'next_date': 'Unknown'
+               'last': 'Unknown',
+               'next': 'Unknown'
             }
 
     return {bin['name']: find_collection(bin['description']) for bin in bins}

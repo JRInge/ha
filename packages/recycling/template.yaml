@@ -16,13 +16,93 @@ recycling_template:
       sensor:
         - name: 'Green bin'
           icon: 'mdi:trash-can-outline'
+          availability: |-
+            {{ state_attr("sensor.bin_day", "bins") is not none
+            and state_attr("sensor.bin_day", "bins")["Green"]["last"]
+            != "Unknown" }}
           state: >
             {% set colour = 'Green' %}
+            {% if state_attr("sensor.bin_day", "bins")[colour]["last"]
+            != "Unknown" %}
+              {% set last_ts =
+                state_attr('sensor.bin_day', 'bins')[colour]['last']
+                | as_timestamp() -%}
+              {% set next_ts =
+                state_attr('sensor.bin_day', 'bins')[colour]['next']
+                | as_timestamp() -%}
+              {% if next_ts == None %}
+                Unknown
+              {%- else %}
+                {% set now_ts = now() | as_timestamp %}
+                {% if next_ts - now_ts < 0 -%}
+                  {% if next_ts | timestamp_custom('%d', True)
+                    == now_ts | timestamp_custom('%d', True) %}
+                    Today
+                  {%- else %}
+                    Overdue
+                  {%- endif %}
+                {%- elif now_ts - last_ts < 86400 %}
+                  Today
+                {%- elif next_ts - now_ts < 86400 -%}
+                  Tomorrow
+                {%- elif next_ts - now_ts < 518400 -%}
+                  {{ next_ts | timestamp_custom('%A', True) }}
+                {%- else -%}
+                  {{ next_ts | timestamp_custom('%a %b %-d', True) }}
+                {%- endif %}
+              {%- endif %}
+            {%- else -%}
+              unknown
+            {%- endif %}
+        - name: 'Black bin'
+          icon: 'mdi:trash-can'
+          availability: |-
+            {{ state_attr("sensor.bin_day", "bins") is not none
+            and state_attr("sensor.bin_day", "bins")["Black"]["last"]
+            != "Unknown" }}
+          state: >
+            {% set colour = 'Black' %}
+            {% if state_attr("sensor.bin_day", "bins")[colour]["last"]
+            != "Unknown" %}
+              {% set last_ts =
+                state_attr('sensor.bin_day', 'bins')[colour]['last']
+                | as_timestamp() -%}
+              {% set next_ts =
+                state_attr('sensor.bin_day', 'bins')[colour]['next']
+                | as_timestamp() -%}
+              {% if next_ts == None %}
+                Unknown
+              {%- else %}
+                {% set now_ts = now() | as_timestamp %}
+                {% if next_ts - now_ts < 0 -%}
+                  {% if next_ts | timestamp_custom('%d', True)
+                    == now_ts | timestamp_custom('%d', True) %}
+                    Today
+                  {%- else %}
+                    Overdue
+                  {%- endif %}
+                {%- elif now_ts - last_ts < 86400 %}
+                  Today
+                {%- elif next_ts - now_ts < 86400 -%}
+                  Tomorrow
+                {%- elif next_ts - now_ts < 518400 -%}
+                  {{ next_ts | timestamp_custom('%A', True) }}
+                {%- else -%}
+                  {{ next_ts | timestamp_custom('%a %b %-d', True) }}
+                {%- endif %}
+              {%- endif %}
+            {%- else -%}
+              unknown
+            {%- endif %}
+        - name: 'Recycling box'
+          icon: 'mdi:recycle'
+          state: >
+            {% set colour = 'Box' %}
             {% set last_ts =
-                state_attr('sensor.bin_day', 'bins')[colour]['last_date']
+                state_attr('sensor.bin_day', 'bins')[colour]['last']
                 | as_timestamp() -%}
             {% set next_ts =
-                state_attr('sensor.bin_day', 'bins')[colour]['next_date']
+                state_attr('sensor.bin_day', 'bins')[colour]['next']
                 | as_timestamp() -%}
             {% if next_ts == None %}
               Unknown
@@ -45,45 +125,54 @@ recycling_template:
                 {{ next_ts | timestamp_custom('%a %b %-d', True) }}
               {%- endif %}
             {%- endif %}
-        - name: 'Black bin'
-          icon: 'mdi:trash-can'
+        - name: 'Tree recycling'
+          icon: 'mdi:pine-tree'
+          availability: |-
+            {{ state_attr("sensor.bin_day", "bins") is not none
+            and state_attr("sensor.bin_day", "bins")["Tree"]["last"]
+            != "Unknown" }}
           state: >
-            {% set colour = 'Black' %}
-            {% set last_ts =
-                state_attr('sensor.bin_day', 'bins')[colour]['last_date']
-                | as_timestamp() -%}
-            {% set next_ts =
-                state_attr('sensor.bin_day', 'bins')[colour]['next_date']
-                | as_timestamp() -%}
-            {% if next_ts == None %}
-              Unknown
-            {%- else %}
-              {% set now_ts = now() | as_timestamp %}
-              {% if next_ts - now_ts < 0 -%}
-                 {% if next_ts | timestamp_custom('%d', True)
-                       == now_ts | timestamp_custom('%d', True) %}
-                    Today
-                 {%- else %}
-                    Overdue
-                 {%- endif %}
-              {%- elif now_ts - last_ts < 86400 %}
-                Today
-              {%- elif next_ts - now_ts < 86400 -%}
-                Tomorrow
-              {%- elif next_ts - now_ts < 518400 -%}
-                {{ next_ts | timestamp_custom('%A', True) }}
-              {%- else -%}
-                {{ next_ts | timestamp_custom('%a %b %-d', True) }}
+            {% set colour = 'Tree' %}
+              {% if state_attr("sensor.bin_day", "bins")[colour]["last"]
+              != "Unknown" %}
+              {% set last_ts =
+                  state_attr('sensor.bin_day', 'bins')[colour]['last']
+                  | as_timestamp() -%}
+              {% set next_ts =
+                  state_attr('sensor.bin_day', 'bins')[colour]['next']
+                  | as_timestamp() -%}
+              {% if next_ts == None %}
+                Unknown
+              {%- else %}
+                {% set now_ts = now() | as_timestamp %}
+                {% if next_ts - now_ts < 0 -%}
+                  {% if next_ts | timestamp_custom('%d', True)
+                    == now_ts | timestamp_custom('%d', True) %}
+                      Today
+                   {%- else %}
+                      Overdue
+                   {%- endif %}
+                {%- elif now_ts - last_ts < 86400 %}
+                  Today
+                {%- elif next_ts - now_ts < 86400 -%}
+                  Tomorrow
+                {%- elif next_ts - now_ts < 518400 -%}
+                  {{ next_ts | timestamp_custom('%A', True) }}
+                {%- else -%}
+                  {{ next_ts | timestamp_custom('%a %b %-d', True) }}
+                {%- endif %}
               {%- endif %}
+            {%- else -%}
+              unknown
             {%- endif %}
         - name: greeen_or_black
           icon: 'mdi:trash-can'
           state: >
             {%- set next_gr =
-                state_attr('sensor.bin_day', 'bins')['Green']['next_date']
+                state_attr('sensor.bin_day', 'bins')['Green']['next']
                 | as_timestamp() -%}
             {%- set next_bk =
-                state_attr('sensor.bin_day', 'bins')['Black']['next_date']
+                state_attr('sensor.bin_day', 'bins')['Black']['next']
                 | as_timestamp() -%}
             {%- if next_gr < next_bk -%}
               Green
